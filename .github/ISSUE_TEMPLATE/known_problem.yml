@@ -8,7 +8,7 @@ body:
       value: |
         # Known Problem 🔎
         > [!IMPORTANT]
-        > - For issues marked "Critical", consider adding the `Help Wanted` and `Critical` labels for faster attention.
+        > - For issues marked "Critical", consider adding the `help wanted` and `Critical` labels for faster attention.
         > - If this problem is security-sensitive, do NOT include secrets; contact maintainers privately.
         > - Use the Affected module checkboxes to help route the analysis to the right team.
 
