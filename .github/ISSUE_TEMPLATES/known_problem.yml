@@ -1,0 +1,118 @@
+name: Known Problem 🔎
+description: Submit a professional problem analysis (root cause, impact assessment, optional suggested solution).
+labels: ["Problem", "analyzis"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Known Problem 🔎
+        > [!IMPORTANT]
+        > - For issues marked "Critical", consider adding the `Help Wanted` and `Critical` labels for faster attention.
+        > - If this problem is security-sensitive, do NOT include secrets; contact maintainers privately.
+        > - Use the Affected module checkboxes to help route the analysis to the right team.
+
+  - type: input
+    id: short_summary
+    attributes:
+      label: Short summary
+      description: One-line summary of the problem (used for titles and quick triage).
+      placeholder: "e.g. Downloaders intermittently receive corrupted blobs when quiz-check is enabled"
+    validations:
+      required: true
+
+  - type: textarea
+    id: detailed_description
+    attributes:
+      label: Detailed description
+      description: Explain the problem in detail. Include observed behavior, where it happens, and why it's concerning.
+      placeholder: |
+        - What is happening?
+        - When and where does it occur?
+        - Who is affected?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: affected_modules
+    attributes:
+      label: Affected module(s)
+      description: Which module(s) does this problem touch? (Select all that apply.)
+      options:
+        - Core (pure abstractions & interfaces)
+        - Infra (implementations)
+        - REST (REST endpoints using infra)
+        - UI (Svelte + TypeScript client)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: Estimate the impact/severity of this problem.
+      options:
+        - Minor
+        - Major
+        - Critical
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact_assessment
+    attributes:
+      label: Impact assessment
+      description: Describe the scope and business/technical impact (users affected, data loss, security, availability).
+      placeholder: |
+        e.g. Affects 10% of uploads; potential data corruption; blocks downloads when quiz validation fails.
+    validations:
+      required: false
+
+  - type: textarea
+    id: root_cause_analysis
+    attributes:
+      label: Root cause analysis
+      description: Present your investigation and reasoning for the root cause. Include logs, stack traces, or experiments that support the conclusion.
+      placeholder: |
+        - Hypothesis 1:
+          - Evidence:
+        - Hypothesis 2:
+          - Evidence:
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to reproduce (if applicable)
+      description: Exact steps, environment, and inputs required to reproduce the problem. If not reproducible, state that here. For important steps, please attach screenshots to make reproduction easier.
+      placeholder: |
+        1. Setup... (screenshot 1)
+        2. Call endpoint...
+        3. Observe... (screenshot 2)
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested_solutions
+    attributes:
+      label: Suggested solution(s) (optional)
+      description: Propose one or more fixes or mitigations. Include trade-offs, complexity, and an estimate if possible.
+      placeholder: |
+        - Short-term mitigation:
+        - Long-term solution:
+        - Estimated effort: e.g. 3d
+    validations:
+      required: false
+
+  - type: textarea
+    id: references_and_artifacts
+    attributes:
+      label: References & artifacts
+      description: Links to related issues, commits, PRs, design docs, screenshots, logs, or test cases.
+      placeholder: |
+        - Issue #123
+        - Commit abcdef
+        - /path/to/log.txt
+    validations:
+      required: false

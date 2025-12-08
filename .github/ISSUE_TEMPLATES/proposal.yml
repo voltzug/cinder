@@ -1,0 +1,75 @@
+name: Proposal 🧠
+description: Preliminary proposal for a task, enhancement, or external suggestion. Use this to propose work before creating a tracked Task.
+labels: ["Proposal"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Proposal 🧠
+
+  - type: input
+    id: proposal_title
+    attributes:
+      label: Proposal Title
+      description: Short, descriptive title for your proposal.
+      placeholder: "Improve quiz-based light mode to reduce server cryptographic responsibility"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal_summary
+    attributes:
+      label: Summary
+      description: One-paragraph summary of the proposal. What do you propose and why?
+      placeholder: |
+        Summarize the idea: goals, intended users, and high-level outcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal_motivation
+    attributes:
+      label: Motivation / Problem Statement
+      description: Why is this proposal needed? Which problems or needs does it address?
+      placeholder: |
+        Explain the motivation and any relevant context (security tradeoffs, UX, performance).
+    validations:
+      required: false
+
+  - type: textarea
+    id: proposal_design
+    attributes:
+      label: Suggested Design / Approach
+      description: Outline a possible design, architecture, or steps to implement this proposal.
+      placeholder: |
+        - High-level approach
+        - Data/model changes
+        - API changes
+        - Security considerations (e.g. OPAQUE vs. quiz-based light mode)
+    validations:
+      required: false
+
+  - type: textarea
+    id: proposal_todos
+    attributes:
+      label: Next Steps / Checklist
+      description: Suggested next steps or an initial checklist to move this proposal forward.
+      placeholder: |
+        - [ ] Discuss and refine scope
+        - [ ] Create `Task` with implementation details
+        - [ ] Assign owner
+        - [ ] Implement and test
+    validations:
+      required: false
+
+  - type: textarea
+    id: proposal_related
+    attributes:
+      label: Related Issues / PRs / References
+      description: Link any related tickets, RFCs, docs, or external references.
+      placeholder: |
+        - Related: #123
+        - RFC: link-to-rfc
+    validations:
+      required: false
