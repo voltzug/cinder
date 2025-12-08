@@ -1,0 +1,96 @@
+name: Task 📝
+description: Create or track a task that needs to be done. Use this template for features, refactors, or planned work items.
+labels: ["Task", "planning"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Task 📝
+
+  - type: input
+    id: title
+    attributes:
+      label: Short Title
+      description: Provide a concise title for the task (single line).
+      placeholder: e.g. Implement OPAQUE-based downloader verification in infra module
+    validations:
+      required: true
+
+  - type: textarea
+    id: task_what
+    attributes:
+      label: WHAT is the task?
+      description: Clearly describe the task to be done. What is the goal? Keep it focused and actionable.
+      placeholder: |
+        Describe the task in detail:
+        - What needs to be added or changed?
+        - Why is this important?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: modules
+    attributes:
+      label: Affected Module(s)
+      description: Select one or more modules impacted by this task.
+      options:
+        - label: core
+          value: core
+        - label: infra
+          value: infra
+        - label: rest
+          value: rest
+        - label: ui
+          value: ui
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested_implementation
+    attributes:
+      label: Suggested Implementation Steps
+      description: Outline a potential approach or steps. Use checkboxes or sub-steps if helpful.
+      placeholder: |
+        ## Research
+        - [ ] Investigate OPAQUE libraries compatible with Java 21
+        ## Design
+        - [ ] Define interfaces in `core`
+        - [ ] Add implementation in `infra`
+        ## Implementation
+        - [ ] Implement endpoint in `rest`
+        - [ ] Add client-side quiz flow in `ui`
+        ## Testing
+        - [ ] Unit tests
+        - [ ] Integration tests
+    validations:
+      required: false
+
+  - type: input
+    id: estimate
+    attributes:
+      label: Estimate
+      description: Rough effort estimate (e.g., 3d, 8h, spike)
+      placeholder: e.g. 2d
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies / Related Tickets
+      description: Mention any dependent tasks, PRs, or external constraints.
+      placeholder: (optional)
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Implementation Checklist
+        - [ ] Write design/spec (if needed)
+        - [ ] Implement code
+        - [ ] Add/Update tests
+        - [ ] Update documentation/README
+        - [ ] Sync with dev
+        - [ ] Get review and merge

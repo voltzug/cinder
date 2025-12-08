@@ -1,0 +1,72 @@
+name: "Bug 👾"
+description: "Report an unexpected issue — friendly for non-technical users and developers."
+labels: ["Bug"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Bug 👾
+        > [!IMPORTANT]
+        > Please fill out as much as you can. For High or Critical issues, consider adding the `Help Wanted` label so maintainers notice it faster.
+
+  - type: textarea
+    id: current_behavior
+    attributes:
+      label: "Current Behavior"
+      description: "What actually happens? Describe the unexpected issue in plain language."
+      placeholder: "e.g. I clicked 'Download' and nothing happened, or I received 'Internal Server Error'."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: "Expected Behavior"
+      description: "What did you expect to happen instead?"
+      placeholder: "Optional — describe the desired or correct behavior."
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: "Steps to Reproduce"
+      description: "List the exact steps and inputs needed to reproduce the problem. If you can't reproduce it, mention that here. Just describe what you did and what you saw, and add any context you think is helpful. For important steps, please attach screenshots to help us understand."
+      placeholder: |
+        1. Setup... (screenshot 1)
+        2. Call endpoint...
+        3. Observe... (screenshot 2)
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: "Environment"
+      description: "OS / Browser / App version / Java version (if known)."
+      placeholder: "e.g. Windows 11, Chrome 120, Java 21"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: "Severity"
+      description: "How severe is the issue for you?"
+      options:
+        - "Low"
+        - "Medium"
+        - "High"
+        - "Critical"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: "Proposed Fix (optional)"
+      description: "If you have an idea how to fix it, describe it here. Maintainers will review suggestions."
+      placeholder: "Optional — e.g. 'Retry on timeout' or 'Validate input earlier'."
+    validations:
+      required: false
