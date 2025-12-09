@@ -1,0 +1,13 @@
+# Secrets
+.env
+
+#
+*.db
+*.log
+*.bkp.*
+
+# IDE
+.idea
+.vscode
+.project
+.settings

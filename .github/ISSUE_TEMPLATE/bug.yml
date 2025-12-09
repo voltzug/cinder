@@ -8,7 +8,7 @@ body:
       value: |
         # Bug 👾
         > [!IMPORTANT]
-        > Please fill out as much as you can. For High or Critical issues, consider adding the `Help Wanted` label so maintainers notice it faster.
+        > Please fill out as much as you can. For High or Critical issues, consider adding the `help wanted` label so maintainers notice it faster.
 
   - type: textarea
     id: current_behavior
