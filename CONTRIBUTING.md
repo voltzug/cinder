@@ -68,7 +68,7 @@ Type: #n Title
 
 ### Public API
 - JavaDoc for public methods, classes
-- package-index.java with JavaDoc for packages
+- package-info.java with JavaDoc for packages
 
 ### AVOID ❌
 - Inline code comments

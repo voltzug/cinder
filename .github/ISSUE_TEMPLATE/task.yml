@@ -36,13 +36,9 @@ body:
       description: Select one or more modules impacted by this task.
       options:
         - label: core
-          value: core
         - label: infra
-          value: infra
         - label: rest
-          value: rest
         - label: ui
-          value: ui
     validations:
       required: true
 

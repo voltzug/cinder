@@ -39,10 +39,10 @@ body:
       label: Affected module(s)
       description: Which module(s) does this problem touch? (Select all that apply.)
       options:
-        - Core (pure abstractions & interfaces)
-        - Infra (implementations)
-        - REST (REST endpoints using infra)
-        - UI (Svelte + TypeScript client)
+        - label: Core (pure abstractions & interfaces)
+        - label: Infra (implementations)
+        - label: REST (REST endpoints using infra)
+        - label: UI (Svelte + TypeScript client)
     validations:
       required: true
 
