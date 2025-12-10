@@ -8,15 +8,6 @@ body:
       value: |
         # Proposal 🧠
 
-  - type: input
-    id: proposal_title
-    attributes:
-      label: Proposal Title
-      description: Short, descriptive title for your proposal.
-      placeholder: "Improve quiz-based light mode to reduce server cryptographic responsibility"
-    validations:
-      required: true
-
   - type: textarea
     id: proposal_summary
     attributes:
