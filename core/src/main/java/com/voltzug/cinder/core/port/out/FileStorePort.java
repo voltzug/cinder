@@ -18,6 +18,7 @@ package com.voltzug.cinder.core.port.out;
 import com.voltzug.cinder.core.common.valueobject.Blob;
 import com.voltzug.cinder.core.domain.valueobject.PathReference;
 import com.voltzug.cinder.core.domain.valueobject.id.FileId;
+import com.voltzug.cinder.core.exception.FileStorageException;
 import java.util.Optional;
 
 /**
@@ -32,7 +33,7 @@ public interface FileStorePort {
    * @param data the encrypted data to store
    * @return the reference path to the stored blob
    */
-  PathReference save(FileId fileId, Blob data);
+  PathReference save(FileId fileId, Blob data) throws FileStorageException;
 
   /**
    * Loads the encrypted blob from storage.
@@ -40,12 +41,12 @@ public interface FileStorePort {
    * @param path the reference path to the blob
    * @return an Optional containing the blob if found
    */
-  Optional<Blob> load(PathReference path);
+  Optional<Blob> load(PathReference path) throws FileStorageException;
 
   /**
    * Deletes the blob from storage.
    *
    * @param path the reference path to the blob
    */
-  void delete(PathReference path);
+  void delete(PathReference path) throws FileStorageException;
 }

@@ -62,7 +62,7 @@ public abstract class Id {
   }
 
   /** Prefix for an identifier. */
-  public interface Prefix {
+  public static interface Prefix {
     /** Returns the code of the prefix. */
     String code();
   }

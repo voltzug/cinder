@@ -16,19 +16,23 @@
 package com.voltzug.cinder.core.port.out;
 
 import com.voltzug.cinder.core.domain.valueobject.SealedBlob;
+import com.voltzug.cinder.core.exception.CryptoOperationException;
 
 /**
  * Outbound port for pepper (server-side secret) operations.
  * Handles the encryption and decryption of sensitive metadata using versioned server-side secrets.
  */
 public interface PepperPort {
+  /** Returns the current active pepper version */
+  short actualPepperVersion();
+
   /**
    * Seals (encrypts) the given data using the current active pepper.
    *
    * @param data the plain data to seal
    * @return a SealedBlob containing the encrypted data, nonce, and pepper version
    */
-  SealedBlob seal(byte[] data);
+  SealedBlob seal(byte[] data) throws CryptoOperationException;
 
   /**
    * Unseals (decrypts) the given SealedBlob using the appropriate pepper version.
@@ -36,5 +40,5 @@ public interface PepperPort {
    * @param sealedBlob the sealed blob to decrypt
    * @return the decrypted plain data
    */
-  byte[] unseal(SealedBlob sealedBlob);
+  byte[] unseal(SealedBlob sealedBlob) throws CryptoOperationException;
 }

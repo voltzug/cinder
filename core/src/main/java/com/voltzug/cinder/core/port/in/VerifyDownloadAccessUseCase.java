@@ -16,6 +16,12 @@
 package com.voltzug.cinder.core.port.in;
 
 import com.voltzug.cinder.core.common.contract.Handshake;
+import com.voltzug.cinder.core.exception.AccessVerificationException;
+import com.voltzug.cinder.core.exception.CryptoOperationException;
+import com.voltzug.cinder.core.exception.FileStorageException;
+import com.voltzug.cinder.core.exception.HmacVerificationException;
+import com.voltzug.cinder.core.exception.InvalidSessionException;
+import com.voltzug.cinder.core.exception.MaxAttemptsExceededException;
 import com.voltzug.cinder.core.model.download.DownloadVerifyRequest;
 import com.voltzug.cinder.core.model.download.DownloadVerifyResult;
 
@@ -37,7 +43,14 @@ public interface VerifyDownloadAccessUseCase<A>
    *
    * @param request the verification request containing the quiz answer hash
    * @return the result containing the encrypted file and metadata
+   * @throws HmacVerificationException when HMAC validation of the request fails
+   * @throws AccessVerificationException when the access/hash check fails (wrong quiz answer)
+   * @throws MaxAttemptsExceededException when download attempts are exhausted
+   * @throws InvalidSessionException when the session is invalid or expired
+   * @throws FileStorageException when an error occurs reading the stored file blob
+   * @throws CryptoOperationException when a cryptographic operation (unseal, decrypt, hmac) fails
    */
   @Override
-  DownloadVerifyResult verify(DownloadVerifyRequest<A> request);
+  DownloadVerifyResult verify(DownloadVerifyRequest<A> request)
+    throws InvalidSessionException, HmacVerificationException, AccessVerificationException, MaxAttemptsExceededException, FileStorageException, CryptoOperationException;
 }

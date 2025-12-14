@@ -15,6 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package com.voltzug.cinder.core.port.in;
 
+import com.voltzug.cinder.core.exception.CryptoOperationException;
+import com.voltzug.cinder.core.exception.FileStorageException;
+import com.voltzug.cinder.core.exception.HmacVerificationException;
+import com.voltzug.cinder.core.exception.InvalidSessionException;
 import com.voltzug.cinder.core.model.upload.UploadRequest;
 import com.voltzug.cinder.core.model.upload.UploadResult;
 
@@ -32,5 +36,6 @@ public interface ProcessUploadUseCase<V> {
    * @param request the upload request containing the encrypted file and metadata
    * @return the result containing the generated access link ID
    */
-  UploadResult processUpload(UploadRequest<V> request);
+  UploadResult processUpload(UploadRequest<V> request)
+    throws InvalidSessionException, HmacVerificationException, FileStorageException, CryptoOperationException;
 }

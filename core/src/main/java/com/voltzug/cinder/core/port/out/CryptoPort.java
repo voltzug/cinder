@@ -17,6 +17,7 @@ package com.voltzug.cinder.core.port.out;
 
 import com.voltzug.cinder.core.domain.valueobject.Hmac;
 import com.voltzug.cinder.core.domain.valueobject.SessionSecret;
+import com.voltzug.cinder.core.exception.CryptoOperationException;
 
 /**
  * Outbound port for cryptographic operations.
@@ -38,8 +39,9 @@ public interface CryptoPort {
    * @param secret the secret key
    * @param data   the data to sign
    * @return the computed HMAC
+   * @throws CryptoOperationException when HMAC computation fails
    */
-  Hmac hmac(SessionSecret secret, byte[] data);
+  Hmac hmac(SessionSecret secret, byte[] data) throws CryptoOperationException;
 
   /**
    * Verifies an HMAC signature in a timing-safe manner.
@@ -48,6 +50,8 @@ public interface CryptoPort {
    * @param data         the data to verify
    * @param expectedHmac the expected HMAC signature
    * @return true if the signature is valid, false otherwise
+   * @throws CryptoOperationException when verification could not be performed (e.g. underlying crypto error)
    */
-  boolean verifyHmac(SessionSecret secret, byte[] data, Hmac expectedHmac);
+  boolean verifyHmac(SessionSecret secret, byte[] data, Hmac expectedHmac)
+    throws CryptoOperationException;
 }

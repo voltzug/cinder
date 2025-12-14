@@ -16,6 +16,7 @@
 package com.voltzug.cinder.core.port.in;
 
 import com.voltzug.cinder.core.common.contract.Handshake;
+import com.voltzug.cinder.core.exception.CryptoOperationException;
 import com.voltzug.cinder.core.model.upload.UploadHandshakeChallenge;
 
 /**
@@ -30,7 +31,9 @@ public interface InitUploadHandshakeUseCase
    *
    * @param context the context for the handshake (e.g. PoW parameters)
    * @return the challenge containing the session ID and upload secret
+   * @throws CryptoOperationException when a cryptographic operation (random generation, HMAC) fails
    */
   @Override
-  UploadHandshakeChallenge challenge(Void _void);
+  UploadHandshakeChallenge challenge(Void _void)
+    throws CryptoOperationException;
 }
