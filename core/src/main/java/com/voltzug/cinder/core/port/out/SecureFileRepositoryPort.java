@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package com.voltzug.cinder.core.port.out;
 
+import com.voltzug.cinder.core.common.valueobject.Blob;
+import com.voltzug.cinder.core.common.valueobject.safe.SafeBlob;
 import com.voltzug.cinder.core.domain.entity.SecureFile;
 import com.voltzug.cinder.core.domain.valueobject.id.FileId;
 import com.voltzug.cinder.core.domain.valueobject.id.LinkId;
@@ -27,14 +29,15 @@ import java.util.Optional;
  * Provides CRUD operations for encrypted file metadata.
  *
  * @param V gateBox type for {@link SecureFile}
+ * @param C gateContext type for {@link SecureFile}
  */
-public interface SecureFileRepositoryPort<V> {
+public interface SecureFileRepositoryPort<V extends SafeBlob, C extends Blob> {
   /**
    * Persists a secure file entity.
    *
    * @param file the file entity to save
    */
-  void save(SecureFile<V> file);
+  void save(SecureFile<V, C> file);
 
   /**
    * Finds a secure file by its public link identifier.
@@ -42,14 +45,21 @@ public interface SecureFileRepositoryPort<V> {
    * @param linkId the link identifier
    * @return an Optional containing the file if found
    */
-  Optional<SecureFile<V>> findByLinkId(LinkId linkId);
+  Optional<SecureFile<V, C>> findByLinkId(LinkId linkId);
 
   /**
    * Deletes a secure file by its internal file identifier.
    *
    * @param fileId the file identifier
    */
-  void delete(FileId fileId);
+  void deleteById(FileId fileId);
+
+  /**
+   * Deletes a secure file by related link identifier.
+   *
+   * @param linkId the link identifier
+   */
+  void deleteByLinkId(LinkId linkId);
 
   /**
    * Finds all files that have expired before the given timestamp.
@@ -58,5 +68,5 @@ public interface SecureFileRepositoryPort<V> {
    * @param timestamp the cutoff timestamp
    * @return a list of expired files
    */
-  List<SecureFile<V>> findExpiredBefore(Instant timestamp);
+  List<SecureFile<V, C>> findExpiredBefore(Instant timestamp);
 }

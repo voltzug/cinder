@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package com.voltzug.cinder.core.domain.entity;
 
-import com.voltzug.cinder.core.common.valueobject.Blob;
 import com.voltzug.cinder.core.domain.valueobject.FileSpecs;
 import com.voltzug.cinder.core.domain.valueobject.PathReference;
 import com.voltzug.cinder.core.domain.valueobject.SealedBlob;
@@ -33,23 +32,23 @@ import java.util.Objects;
  * @param blobPath           Reference to the file's storage location
  * @param sealedEnvelope     Server-sealed envelope containing file key and nonce
  * @param sealedSalt         Server-sealed salt for key derivation
- * @param gateBox            Generic gate mechanism for access control (type V), such as a hash for quiz/answer verification or other challenge data
- * @param encryptedQuestions Encrypted quiz questions
  * @param specs              File specification parameters (expiry, retry count)
  * @param remainingAttempts  Remaining download attempts
  * @param createdAt          Creation timestamp
+ * @param gateBox            Generic gate mechanism for access control (type V), such as a hash for quiz/answer verification or other challenge data
+ * @param gateContext        Generic gate context (type C), may be null depending on the gate mechanism (eg. encrypted quiz questions)
  */
-public record SecureFile<V>(
+public record SecureFile<V, C>(
   FileId fileId,
   LinkId linkId,
   PathReference blobPath,
   SealedBlob sealedEnvelope,
   SealedBlob sealedSalt,
-  V gateBox,
-  Blob encryptedQuestions,
   FileSpecs specs,
   int remainingAttempts,
-  Instant createdAt
+  Instant createdAt,
+  V gateBox,
+  C gateContext
 ) implements IExpirable {
   public SecureFile {
     Objects.requireNonNull(fileId, "fileId must not be null");
@@ -57,13 +56,10 @@ public record SecureFile<V>(
     Objects.requireNonNull(blobPath, "blobPath must not be null");
     Objects.requireNonNull(sealedEnvelope, "sealedEnvelope must not be null");
     Objects.requireNonNull(sealedSalt, "sealedSalt must not be null");
-    Objects.requireNonNull(gateBox, "gateBox must not be null");
-    Objects.requireNonNull(
-      encryptedQuestions,
-      "encryptedQuestions must not be null"
-    );
     Objects.requireNonNull(specs, "specs must not be null");
     Objects.requireNonNull(createdAt, "createdAt must not be null");
+    Objects.requireNonNull(gateBox, "gateBox must not be null");
+    // gateContext can be null
   }
 
   @Override
@@ -84,11 +80,11 @@ public record SecureFile<V>(
       blobPath,
       sealedEnvelope,
       sealedSalt,
-      gateBox,
-      encryptedQuestions,
       specs,
       remainingAttempts,
-      createdAt
+      createdAt,
+      gateBox,
+      gateContext
     );
   }
 
@@ -96,7 +92,7 @@ public record SecureFile<V>(
   public final boolean equals(Object other) {
     if (this == other) return true;
     if (getClass() != other.getClass()) return false;
-    SecureFile<?> o = (SecureFile<?>) other;
+    SecureFile<?,?> o = (SecureFile<?,?>) other;
     return (
       remainingAttempts == o.remainingAttempts &&
       Objects.equals(createdAt, o.createdAt) &&
@@ -107,7 +103,7 @@ public record SecureFile<V>(
       Objects.equals(gateBox, o.gateBox) &&
       Objects.equals(sealedSalt, o.sealedSalt) &&
       Objects.equals(sealedEnvelope, o.sealedEnvelope) &&
-      Objects.equals(encryptedQuestions, o.encryptedQuestions)
+      Objects.equals(gateContext, o.gateContext)
     );
   }
 }
