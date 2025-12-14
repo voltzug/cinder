@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package com.voltzug.cinder.core.port.in;
 
+import com.voltzug.cinder.core.exception.FileStorageException;
+
 /**
  * Use case for cleaning up expired files and links from the system.
  * This is typically executed by a scheduled job to remove expired content.
@@ -25,5 +27,5 @@ public interface CleanupExpiredFilesUseCase {
    *
    * @return the number of files cleaned up
    */
-  int cleanupExpiredFiles();
+  int cleanupExpiredFiles() throws FileStorageException;
 }

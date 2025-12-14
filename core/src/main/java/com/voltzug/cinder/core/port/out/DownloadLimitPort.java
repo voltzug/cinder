@@ -48,8 +48,10 @@ public interface DownloadLimitPort {
    *
    * @param linkId the link identifier
    * @return the updated DownloadLimit
+   * @throws com.voltzug.cinder.core.exception.MaxAttemptsExceededException when attempts reach zero
    */
-  DownloadLimit decrementAttempts(LinkId linkId);
+  DownloadLimit decrementAttempts(LinkId linkId)
+    throws com.voltzug.cinder.core.exception.MaxAttemptsExceededException;
 
   /**
    * Deletes the download limit record for a link.

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package com.voltzug.cinder.core.port.in;
 
+import com.voltzug.cinder.core.exception.FileStorageException;
+import com.voltzug.cinder.core.exception.InvalidSessionException;
 import com.voltzug.cinder.core.model.download.DownloadAcknowledgment;
 
 /**
@@ -27,6 +29,9 @@ public interface AcknowledgeDownloadUseCase {
    * Acknowledges the successful download of a file.
    *
    * @param acknowledgment the acknowledgment containing the session ID
+   * @throws FileStorageException when deletion or storage cleanup fails
+   * @throws InvalidSessionException when the session referenced in the acknowledgment is invalid or expired
    */
-  void acknowledgeDownload(DownloadAcknowledgment acknowledgment);
+  void acknowledgeDownload(DownloadAcknowledgment acknowledgment)
+    throws FileStorageException, InvalidSessionException;
 }

@@ -16,6 +16,9 @@
 package com.voltzug.cinder.core.port.in;
 
 import com.voltzug.cinder.core.common.contract.Handshake;
+import com.voltzug.cinder.core.exception.CinderException;
+import com.voltzug.cinder.core.exception.InvalidLinkException;
+import com.voltzug.cinder.core.exception.InvalidSessionException;
 import com.voltzug.cinder.core.model.download.DownloadHandshakeChallenge;
 import com.voltzug.cinder.core.model.download.DownloadHandshakeContext;
 
@@ -39,5 +42,6 @@ public interface InitDownloadHandshakeUseCase<C>
    * @return the challenge containing the session ID and encrypted questions
    */
   @Override
-  DownloadHandshakeChallenge challenge(DownloadHandshakeContext<C> context);
+  DownloadHandshakeChallenge challenge(DownloadHandshakeContext<C> context)
+    throws InvalidLinkException, InvalidSessionException, CinderException;
 }

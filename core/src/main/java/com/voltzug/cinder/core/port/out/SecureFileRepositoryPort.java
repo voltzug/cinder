@@ -25,14 +25,16 @@ import java.util.Optional;
 /**
  * Outbound port for SecureFile persistence.
  * Provides CRUD operations for encrypted file metadata.
+ *
+ * @param V gateBox type for {@link SecureFile}
  */
-public interface SecureFileRepositoryPort {
+public interface SecureFileRepositoryPort<V> {
   /**
    * Persists a secure file entity.
    *
    * @param file the file entity to save
    */
-  void save(SecureFile file);
+  void save(SecureFile<V> file);
 
   /**
    * Finds a secure file by its public link identifier.
@@ -40,7 +42,7 @@ public interface SecureFileRepositoryPort {
    * @param linkId the link identifier
    * @return an Optional containing the file if found
    */
-  Optional<SecureFile> findByLinkId(LinkId linkId);
+  Optional<SecureFile<V>> findByLinkId(LinkId linkId);
 
   /**
    * Deletes a secure file by its internal file identifier.
@@ -56,5 +58,5 @@ public interface SecureFileRepositoryPort {
    * @param timestamp the cutoff timestamp
    * @return a list of expired files
    */
-  List<SecureFile> findExpiredBefore(Instant timestamp);
+  List<SecureFile<V>> findExpiredBefore(Instant timestamp);
 }

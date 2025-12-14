@@ -31,7 +31,7 @@ public final class Handshake {
    * @param <C> Context type for challenge generation.
    * @param <T> Challenge type.
    */
-  public interface IAgreeableRequest<C extends Object, T> {
+  public static interface IAgreeableRequest<C extends Object, T> {
     /**
      * Issues a challenge based on the provided context.
      *
@@ -47,7 +47,7 @@ public final class Handshake {
    * @param <S> Solution type.
    * @param <R> Verification result type.
    */
-  public interface IAgreeableResponse<S, R> {
+  public static interface IAgreeableResponse<S, R> {
     /**
      * Verifies the provided solution to the challenge.
      *
