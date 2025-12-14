@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.voltzug.cinder.core.common.valueobject.Blob;
 import com.voltzug.cinder.core.domain.valueobject.FileSpecs;
-import com.voltzug.cinder.core.domain.valueobject.GateHash;
 import com.voltzug.cinder.core.domain.valueobject.PathReference;
 import com.voltzug.cinder.core.domain.valueobject.SealedBlob;
 import com.voltzug.cinder.core.domain.valueobject.id.FileId;
@@ -14,7 +13,7 @@ import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
 
 /**
- * Comprehensive tests for SecureFile entity.
+ * Comprehensive tests for SecureFile<byte[]> entity.
  * Tests secure file creation, validation, and expiration logic.
  */
 class SecureFileTest {
@@ -49,8 +48,8 @@ class SecureFileTest {
     );
   }
 
-  private GateHash createGateHash() {
-    return new GateHash(new byte[32]);
+  private byte[] createGateHash() {
+    return new byte[32];
   }
 
   private Blob createEncryptedQuestions() {
@@ -61,8 +60,8 @@ class SecureFileTest {
     return new FileSpecs(expiryDate, 5);
   }
 
-  private SecureFile createValidSecureFile(Instant expiryDate) {
-    return new SecureFile(
+  private SecureFile<byte[]> createValidSecureFile(Instant expiryDate) {
+    return new SecureFile<byte[]>(
       createFileId(),
       createLinkId(),
       createBlobPath(),
@@ -86,7 +85,7 @@ class SecureFileTest {
     PathReference blobPath = createBlobPath();
     SealedBlob sealedEnvelope = createSealedEnvelope();
     SealedBlob sealedSalt = createSealedSalt();
-    GateHash gateHash = createGateHash();
+    byte[] gateBox = createGateHash();
     Blob encryptedQuestions = createEncryptedQuestions();
     Instant expiryDate = Instant.now().plus(1, ChronoUnit.DAYS);
     FileSpecs specs = createFileSpecs(expiryDate);
@@ -94,13 +93,13 @@ class SecureFileTest {
     Instant createdAt = Instant.now();
 
     // When
-    SecureFile secureFile = new SecureFile(
+    SecureFile<byte[]> secureFile = new SecureFile<byte[]>(
       fileId,
       linkId,
       blobPath,
       sealedEnvelope,
       sealedSalt,
-      gateHash,
+      gateBox,
       encryptedQuestions,
       specs,
       remainingAttempts,
@@ -114,7 +113,7 @@ class SecureFileTest {
     assertEquals(blobPath, secureFile.blobPath());
     assertEquals(sealedEnvelope, secureFile.sealedEnvelope());
     assertEquals(sealedSalt, secureFile.sealedSalt());
-    assertEquals(gateHash, secureFile.gateHash());
+    assertEquals(gateBox, secureFile.gateBox());
     assertEquals(encryptedQuestions, secureFile.encryptedQuestions());
     assertEquals(specs, secureFile.specs());
     assertEquals(remainingAttempts, secureFile.remainingAttempts());
@@ -127,7 +126,7 @@ class SecureFileTest {
     Instant expiryDate = Instant.now().plus(1, ChronoUnit.DAYS);
 
     // When
-    SecureFile secureFile = new SecureFile(
+    SecureFile<byte[]> secureFile = new SecureFile<byte[]>(
       createFileId(),
       createLinkId(),
       createBlobPath(),
@@ -150,7 +149,7 @@ class SecureFileTest {
     Instant expiryDate = Instant.now().plus(1, ChronoUnit.DAYS);
 
     // When
-    SecureFile secureFile = new SecureFile(
+    SecureFile<byte[]> secureFile = new SecureFile<byte[]>(
       createFileId(),
       createLinkId(),
       createBlobPath(),
@@ -178,7 +177,7 @@ class SecureFileTest {
     NullPointerException exception = assertThrows(
       NullPointerException.class,
       () ->
-        new SecureFile(
+        new SecureFile<byte[]>(
           null,
           createLinkId(),
           createBlobPath(),
@@ -203,7 +202,7 @@ class SecureFileTest {
     NullPointerException exception = assertThrows(
       NullPointerException.class,
       () ->
-        new SecureFile(
+        new SecureFile<byte[]>(
           createFileId(),
           null,
           createBlobPath(),
@@ -228,7 +227,7 @@ class SecureFileTest {
     NullPointerException exception = assertThrows(
       NullPointerException.class,
       () ->
-        new SecureFile(
+        new SecureFile<byte[]>(
           createFileId(),
           createLinkId(),
           null,
@@ -253,7 +252,7 @@ class SecureFileTest {
     NullPointerException exception = assertThrows(
       NullPointerException.class,
       () ->
-        new SecureFile(
+        new SecureFile<byte[]>(
           createFileId(),
           createLinkId(),
           createBlobPath(),
@@ -278,7 +277,7 @@ class SecureFileTest {
     NullPointerException exception = assertThrows(
       NullPointerException.class,
       () ->
-        new SecureFile(
+        new SecureFile<byte[]>(
           createFileId(),
           createLinkId(),
           createBlobPath(),
@@ -303,7 +302,7 @@ class SecureFileTest {
     NullPointerException exception = assertThrows(
       NullPointerException.class,
       () ->
-        new SecureFile(
+        new SecureFile<byte[]>(
           createFileId(),
           createLinkId(),
           createBlobPath(),
@@ -316,7 +315,7 @@ class SecureFileTest {
           Instant.now()
         )
     );
-    assertEquals("gateHash must not be null", exception.getMessage());
+    assertEquals("gateBox must not be null", exception.getMessage());
   }
 
   @Test
@@ -328,7 +327,7 @@ class SecureFileTest {
     NullPointerException exception = assertThrows(
       NullPointerException.class,
       () ->
-        new SecureFile(
+        new SecureFile<byte[]>(
           createFileId(),
           createLinkId(),
           createBlobPath(),
@@ -350,7 +349,7 @@ class SecureFileTest {
     NullPointerException exception = assertThrows(
       NullPointerException.class,
       () ->
-        new SecureFile(
+        new SecureFile<byte[]>(
           createFileId(),
           createLinkId(),
           createBlobPath(),
@@ -375,7 +374,7 @@ class SecureFileTest {
     NullPointerException exception = assertThrows(
       NullPointerException.class,
       () ->
-        new SecureFile(
+        new SecureFile<byte[]>(
           createFileId(),
           createLinkId(),
           createBlobPath(),
@@ -397,7 +396,7 @@ class SecureFileTest {
   void shouldReturnExpiryDateFromSpecs() {
     // Given
     Instant expiryDate = Instant.now().plus(2, ChronoUnit.HOURS);
-    SecureFile secureFile = createValidSecureFile(expiryDate);
+    SecureFile<byte[]> secureFile = createValidSecureFile(expiryDate);
 
     // When
     Instant result = secureFile.getExpiryDate();
@@ -410,7 +409,7 @@ class SecureFileTest {
   void shouldReturnTrueWhenFileExpired() {
     // Given
     Instant expiryDate = Instant.now().minus(1, ChronoUnit.HOURS);
-    SecureFile secureFile = createValidSecureFile(expiryDate);
+    SecureFile<byte[]> secureFile = createValidSecureFile(expiryDate);
 
     // When
     boolean expired = secureFile.isExpired(Instant.now());
@@ -423,7 +422,7 @@ class SecureFileTest {
   void shouldReturnFalseWhenFileNotExpired() {
     // Given
     Instant expiryDate = Instant.now().plus(1, ChronoUnit.HOURS);
-    SecureFile secureFile = createValidSecureFile(expiryDate);
+    SecureFile<byte[]> secureFile = createValidSecureFile(expiryDate);
 
     // When
     boolean expired = secureFile.isExpired(Instant.now());
@@ -436,7 +435,7 @@ class SecureFileTest {
   void shouldReturnFalseWhenExactlyAtExpiryTime() {
     // Given
     Instant now = Instant.now();
-    SecureFile secureFile = createValidSecureFile(now);
+    SecureFile<byte[]> secureFile = createValidSecureFile(now);
 
     // When
     boolean expired = secureFile.isExpired(now);
@@ -449,7 +448,7 @@ class SecureFileTest {
   void shouldReturnTrueWhenOneMillisecondAfterExpiry() {
     // Given
     Instant expiryDate = Instant.now();
-    SecureFile secureFile = createValidSecureFile(expiryDate);
+    SecureFile<byte[]> secureFile = createValidSecureFile(expiryDate);
     Instant oneMilliAfter = expiryDate.plusMillis(1);
 
     // When
@@ -463,7 +462,7 @@ class SecureFileTest {
   void shouldReturnFalseWhenOneMillisecondBeforeExpiry() {
     // Given
     Instant expiryDate = Instant.now().plus(1, ChronoUnit.DAYS);
-    SecureFile secureFile = createValidSecureFile(expiryDate);
+    SecureFile<byte[]> secureFile = createValidSecureFile(expiryDate);
     Instant oneMilliBefore = expiryDate.minusMillis(1);
 
     // When
@@ -478,7 +477,7 @@ class SecureFileTest {
     // Given
     Instant expiryDate = Instant.now().plus(1, ChronoUnit.DAYS);
     FileSpecs specs = createFileSpecs(expiryDate);
-    SecureFile secureFile = new SecureFile(
+    SecureFile<byte[]> secureFile = new SecureFile<byte[]>(
       createFileId(),
       createLinkId(),
       createBlobPath(),
@@ -505,7 +504,7 @@ class SecureFileTest {
     Instant expiryDate = Instant.now().plus(1, ChronoUnit.DAYS);
 
     // When
-    SecureFile secureFile = createValidSecureFile(expiryDate);
+    SecureFile<byte[]> secureFile = createValidSecureFile(expiryDate);
 
     // Then
     assertTrue(secureFile instanceof IExpirable);
@@ -519,7 +518,7 @@ class SecureFileTest {
     Instant expiryDate = Instant.now().plus(1, ChronoUnit.DAYS);
 
     // When
-    SecureFile secureFile = new SecureFile(
+    SecureFile<byte[]> secureFile = new SecureFile<byte[]>(
       createFileId(),
       createLinkId(),
       createBlobPath(),
@@ -542,7 +541,7 @@ class SecureFileTest {
     Instant farFuture = Instant.now().plus(365 * 100, ChronoUnit.DAYS);
 
     // When
-    SecureFile secureFile = createValidSecureFile(farFuture);
+    SecureFile<byte[]> secureFile = createValidSecureFile(farFuture);
 
     // Then
     assertFalse(secureFile.isExpired(Instant.now()));
@@ -556,7 +555,7 @@ class SecureFileTest {
     Instant pastCreatedAt = Instant.now().minus(30, ChronoUnit.DAYS);
 
     // When
-    SecureFile secureFile = new SecureFile(
+    SecureFile<byte[]> secureFile = new SecureFile<byte[]>(
       createFileId(),
       createLinkId(),
       createBlobPath(),
@@ -583,20 +582,20 @@ class SecureFileTest {
     PathReference blobPath = PathReference.from("/tmp/same/path.bin");
     SealedBlob sealedEnvelope = createSealedEnvelope();
     SealedBlob sealedSalt = createSealedSalt();
-    GateHash gateHash = createGateHash();
+    byte[] gateBox = createGateHash();
     Blob encryptedQuestions = createEncryptedQuestions();
     Instant expiryDate = Instant.parse("2025-06-01T12:00:00Z");
     FileSpecs specs = new FileSpecs(expiryDate, 3);
     Instant createdAt = Instant.parse("2025-01-01T00:00:00Z");
 
     // When
-    SecureFile file1 = new SecureFile(
+    SecureFile<byte[]> file1 = new SecureFile<byte[]>(
       fileId,
       linkId,
       blobPath,
       sealedEnvelope,
       sealedSalt,
-      gateHash,
+      gateBox,
       encryptedQuestions,
       specs,
       5,
@@ -615,7 +614,7 @@ class SecureFileTest {
   void shouldAccessAllRecordComponents() {
     // Given
     Instant expiryDate = Instant.now().plus(1, ChronoUnit.DAYS);
-    SecureFile secureFile = createValidSecureFile(expiryDate);
+    SecureFile<byte[]> secureFile = createValidSecureFile(expiryDate);
 
     // Then - All component accessors should work
     assertNotNull(secureFile.fileId());
@@ -623,7 +622,7 @@ class SecureFileTest {
     assertNotNull(secureFile.blobPath());
     assertNotNull(secureFile.sealedEnvelope());
     assertNotNull(secureFile.sealedSalt());
-    assertNotNull(secureFile.gateHash());
+    assertNotNull(secureFile.gateBox());
     assertNotNull(secureFile.encryptedQuestions());
     assertNotNull(secureFile.specs());
     assertNotNull(secureFile.createdAt());

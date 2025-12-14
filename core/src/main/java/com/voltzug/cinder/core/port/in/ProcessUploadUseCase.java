@@ -22,13 +22,15 @@ import com.voltzug.cinder.core.model.upload.UploadResult;
  * Use case for processing an encrypted file upload.
  * This step verifies the integrity of the upload payload using the session secret,
  * stores the encrypted file and metadata, and generates a public access link.
+ *
+ * @param V gate verifier
  */
-public interface ProcessUploadUseCase {
+public interface ProcessUploadUseCase<V> {
   /**
    * Processes the upload request.
    *
    * @param request the upload request containing the encrypted file and metadata
    * @return the result containing the generated access link ID
    */
-  UploadResult processUpload(UploadRequest request);
+  UploadResult processUpload(UploadRequest<V> request);
 }

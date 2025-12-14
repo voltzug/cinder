@@ -17,7 +17,6 @@ package com.voltzug.cinder.core.domain.entity;
 
 import com.voltzug.cinder.core.common.valueobject.Blob;
 import com.voltzug.cinder.core.domain.valueobject.FileSpecs;
-import com.voltzug.cinder.core.domain.valueobject.GateHash;
 import com.voltzug.cinder.core.domain.valueobject.PathReference;
 import com.voltzug.cinder.core.domain.valueobject.SealedBlob;
 import com.voltzug.cinder.core.domain.valueobject.id.FileId;
@@ -34,19 +33,19 @@ import java.util.Objects;
  * @param blobPath           Reference to the file's storage location
  * @param sealedEnvelope     Server-sealed envelope containing file key and nonce
  * @param sealedSalt         Server-sealed salt for key derivation
- * @param gateHash           Hash for quiz/answer verification
+ * @param gateBox            Generic gate mechanism for access control (type V), such as a hash for quiz/answer verification or other challenge data
  * @param encryptedQuestions Encrypted quiz questions
  * @param specs              File specification parameters (expiry, retry count)
  * @param remainingAttempts  Remaining download attempts
  * @param createdAt          Creation timestamp
  */
-public record SecureFile(
+public record SecureFile<V>(
   FileId fileId,
   LinkId linkId,
   PathReference blobPath,
   SealedBlob sealedEnvelope,
   SealedBlob sealedSalt,
-  GateHash gateHash,
+  V gateBox,
   Blob encryptedQuestions,
   FileSpecs specs,
   int remainingAttempts,
@@ -58,7 +57,7 @@ public record SecureFile(
     Objects.requireNonNull(blobPath, "blobPath must not be null");
     Objects.requireNonNull(sealedEnvelope, "sealedEnvelope must not be null");
     Objects.requireNonNull(sealedSalt, "sealedSalt must not be null");
-    Objects.requireNonNull(gateHash, "gateHash must not be null");
+    Objects.requireNonNull(gateBox, "gateBox must not be null");
     Objects.requireNonNull(
       encryptedQuestions,
       "encryptedQuestions must not be null"
@@ -85,7 +84,7 @@ public record SecureFile(
       blobPath,
       sealedEnvelope,
       sealedSalt,
-      gateHash,
+      gateBox,
       encryptedQuestions,
       specs,
       remainingAttempts,
@@ -97,7 +96,7 @@ public record SecureFile(
   public final boolean equals(Object other) {
     if (this == other) return true;
     if (getClass() != other.getClass()) return false;
-    SecureFile o = (SecureFile) other;
+    SecureFile<?> o = (SecureFile<?>) other;
     return (
       remainingAttempts == o.remainingAttempts &&
       Objects.equals(createdAt, o.createdAt) &&
@@ -105,7 +104,7 @@ public record SecureFile(
       Objects.equals(fileId, o.fileId) &&
       Objects.equals(linkId, o.linkId) &&
       Objects.equals(blobPath, o.blobPath) &&
-      Objects.equals(gateHash, o.gateHash) &&
+      Objects.equals(gateBox, o.gateBox) &&
       Objects.equals(sealedSalt, o.sealedSalt) &&
       Objects.equals(sealedEnvelope, o.sealedEnvelope) &&
       Objects.equals(encryptedQuestions, o.encryptedQuestions)

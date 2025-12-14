@@ -18,7 +18,6 @@ package com.voltzug.cinder.core.model.upload;
 import com.voltzug.cinder.core.common.valueobject.Blob;
 import com.voltzug.cinder.core.domain.valueobject.Envelope;
 import com.voltzug.cinder.core.domain.valueobject.FileSpecs;
-import com.voltzug.cinder.core.domain.valueobject.GateHash;
 import com.voltzug.cinder.core.domain.valueobject.Hmac;
 import com.voltzug.cinder.core.domain.valueobject.Salt;
 import com.voltzug.cinder.core.domain.valueobject.Timestamp;
@@ -34,18 +33,19 @@ import java.util.Objects;
  * @param encryptedFile      the encrypted file content (blob)
  * @param envelope           the encrypted key envelope (fK||fNonce sealed with quizK)
  * @param salt               the random salt used for key derivation
- * @param gateHash           the hash of the quiz answer/password for verification
+ * @param gateVerifier       a generic type V, allowing flexibility in the kind of verification mechanism
+ * used for access control (eg. hash of the quiz answer/password for verification)
  * @param encryptedQuestions the encrypted quiz questions (blob)
  * @param fileSpecs          file configuration (expiry, retry count)
  * @param hmac               HMAC signature of the payload for integrity verification
  * @param timestamp          timestamp of the request for replay protection
  */
-public record UploadRequest(
+public record UploadRequest<V>(
   SessionId sessionId,
   Blob encryptedFile,
   Envelope envelope,
   Salt salt,
-  GateHash gateHash,
+  V gateVerifier,
   Blob encryptedQuestions,
   FileSpecs fileSpecs,
   Hmac hmac,
@@ -56,7 +56,7 @@ public record UploadRequest(
     Objects.requireNonNull(encryptedFile, "encryptedFile must not be null");
     Objects.requireNonNull(envelope, "envelope must not be null");
     Objects.requireNonNull(salt, "salt must not be null");
-    Objects.requireNonNull(gateHash, "gateHash must not be null");
+    Objects.requireNonNull(gateVerifier, "gateVerifier must not be null");
     Objects.requireNonNull(
       encryptedQuestions,
       "encryptedQuestions must not be null"
