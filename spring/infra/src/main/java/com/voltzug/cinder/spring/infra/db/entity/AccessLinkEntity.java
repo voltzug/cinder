@@ -19,6 +19,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -30,7 +31,10 @@ import lombok.Setter;
 /**
  * JPA entity mapping for the access_link table.
  * Stores link-specific metadata such as remaining attempts, gate box, and gate context.
- * Has a 1:1 relationship with SecureFileEntity.
+ * Has a 1:1 relationship with SecureFileEntity, owning the relationship via FK.
+ *
+ * <p>This entity is created AFTER SecureFileEntity, allowing SafeFile to be
+ * persisted first before download limits are configured.</p>
  */
 @Entity
 @Table(name = "access_link")
@@ -63,7 +67,13 @@ public class AccessLinkEntity {
   @Setter
   private Instant updatedAt;
 
-  @OneToOne(mappedBy = "accessLink", fetch = FetchType.LAZY, optional = false)
+  @OneToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(
+    name = "file_id",
+    nullable = false,
+    unique = true,
+    updatable = false
+  )
   private SecureFileEntity secureFile;
 
   /**
@@ -73,9 +83,9 @@ public class AccessLinkEntity {
    * @param remainingAttempts remaining download attempts
    * @param gateBox           the gate mechanism data (e.g., hash or challenge)
    * @param gateContext       the gate context data (may be null, eg. encrypted quiz questions)
-   * @param createdAt the creation timestamp
-   * @param updatedAt the last updated timestamp
-   * @param secureFile        the associated SecureFileEntity
+   * @param createdAt         the creation timestamp
+   * @param updatedAt         the last updated timestamp
+   * @param secureFile        the associated SecureFileEntity (must exist before this entity)
    */
   public AccessLinkEntity(
     String id,
@@ -93,5 +103,36 @@ public class AccessLinkEntity {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.secureFile = secureFile;
+  }
+
+  /**
+   * Creates a new AccessLinkEntity for initializing download limits.
+   * Used when configuring download limits after SecureFileEntity is already saved.
+   *
+   * @param linkId            the unique link identifier (matches SecureFileEntity.linkId)
+   * @param remainingAttempts initial remaining download attempts from FileSpecs
+   * @param gateBox           the gate mechanism data
+   * @param gateContext       the gate context data (may be null)
+   * @param now               the current timestamp for created/updated
+   * @param secureFile        the associated SecureFileEntity
+   * @return a new AccessLinkEntity ready to be persisted
+   */
+  public static AccessLinkEntity forInitialization(
+    String linkId,
+    int remainingAttempts,
+    byte[] gateBox,
+    byte[] gateContext,
+    Instant now,
+    SecureFileEntity secureFile
+  ) {
+    return new AccessLinkEntity(
+      linkId,
+      remainingAttempts,
+      gateBox,
+      gateContext,
+      now,
+      now,
+      secureFile
+    );
   }
 }

@@ -15,10 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package com.voltzug.cinder.spring.infra.db.repository;
 
-import com.voltzug.cinder.core.common.valueobject.Blob;
-import com.voltzug.cinder.core.common.valueobject.safe.SafeBlob;
 import com.voltzug.cinder.spring.infra.db.entity.SecureFileEntity;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SecureFileRepository<V extends SafeBlob, C extends Blob>
-  extends JpaRepository<SecureFileEntity, String> {}
+/**
+ * Spring Data JPA repository for SecureFileEntity.
+ * Provides CRUD operations and custom queries for secure file persistence.
+ */
+public interface SecureFileRepository
+  extends JpaRepository<SecureFileEntity, String> {
+  /**
+   * Finds a secure file by its associated link identifier.
+   *
+   * @param linkId the link identifier
+   * @return an Optional containing the file if found
+   */
+  Optional<SecureFileEntity> findByLinkId(String linkId);
+
+  /**
+   * Deletes a secure file by its associated link identifier.
+   *
+   * @param linkId the link identifier
+   */
+  void deleteByLinkId(String linkId);
+
+  /**
+   * Finds all files that have expired before the given timestamp.
+   * Used for cleanup jobs to identify files ready for burning.
+   *
+   * @param timestamp the cutoff timestamp
+   * @return a list of expired files
+   */
+  List<SecureFileEntity> findByExpiryDateBefore(Instant timestamp);
+}

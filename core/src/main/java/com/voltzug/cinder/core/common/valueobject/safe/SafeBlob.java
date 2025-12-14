@@ -78,6 +78,7 @@ public class SafeBlob
    *
    * @return the internal byte array buffer
    */
+  @Override
   public byte[] getBytes() {
     if (_wasResolved) {
       throw new IllegalStateException("has been resolved");
