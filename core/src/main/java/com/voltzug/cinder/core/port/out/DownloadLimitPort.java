@@ -18,6 +18,8 @@ package com.voltzug.cinder.core.port.out;
 import com.voltzug.cinder.core.domain.entity.DownloadLimit;
 import com.voltzug.cinder.core.domain.valueobject.FileSpecs;
 import com.voltzug.cinder.core.domain.valueobject.id.LinkId;
+import com.voltzug.cinder.core.exception.InvalidLinkException;
+import com.voltzug.cinder.core.exception.MaxAttemptsExceededException;
 import java.util.Optional;
 
 /**
@@ -32,7 +34,7 @@ public interface DownloadLimitPort {
    * @param linkId the link identifier
    * @param specs the file specifications containing retry count and expiry
    */
-  void initialize(LinkId linkId, FileSpecs specs);
+  void initialize(LinkId linkId, FileSpecs specs) throws InvalidLinkException;
 
   /**
    * Retrieves the current download limit state for a link.
@@ -40,7 +42,7 @@ public interface DownloadLimitPort {
    * @param linkId the link identifier
    * @return an Optional containing the download limit if found
    */
-  Optional<DownloadLimit> get(LinkId linkId);
+  Optional<DownloadLimit> get(LinkId linkId) throws InvalidLinkException;
 
   /**
    * Decrements the remaining attempts counter for a link.
@@ -51,7 +53,7 @@ public interface DownloadLimitPort {
    * @throws com.voltzug.cinder.core.exception.MaxAttemptsExceededException when attempts reach zero
    */
   DownloadLimit decrementAttempts(LinkId linkId)
-    throws com.voltzug.cinder.core.exception.MaxAttemptsExceededException;
+    throws MaxAttemptsExceededException;
 
   /**
    * Deletes the download limit record for a link.

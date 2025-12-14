@@ -62,7 +62,7 @@ public final class InfraLogger {
    */
   public void error(String message) {
     _slf4jLogger.error(message);
-    _julLogger.severe(message);
+    //_julLogger.severe(message);
   }
 
   /**
@@ -73,7 +73,7 @@ public final class InfraLogger {
    */
   public void error(String message, Throwable throwable) {
     _slf4jLogger.error(message, throwable);
-    _julLogger.log(Level.SEVERE, message, throwable);
+    //_julLogger.log(Level.SEVERE, message, throwable);
   }
 
   /**
@@ -84,7 +84,7 @@ public final class InfraLogger {
    */
   public void error(String format, Object arg) {
     _slf4jLogger.error(format, arg);
-    _julLogger.severe(String.format(format.replace("{}", "%s"), arg));
+    //_julLogger.severe(String.format(format.replace("{}", "%s"), arg));
   }
 
   /**
@@ -96,7 +96,7 @@ public final class InfraLogger {
    */
   public void error(String format, Object arg1, Object arg2) {
     _slf4jLogger.error(format, arg1, arg2);
-    _julLogger.severe(String.format(format.replace("{}", "%s"), arg1, arg2));
+    //_julLogger.severe(String.format(format.replace("{}", "%s"), arg1, arg2));
   }
 
   /**
@@ -107,7 +107,7 @@ public final class InfraLogger {
    */
   public void error(String format, Object... args) {
     _slf4jLogger.error(format, args);
-    _julLogger.severe(String.format(format.replaceAll("\\{\\}", "%s"), args));
+    //_julLogger.severe(String.format(format.replaceAll("\\{\\}", "%s"), args));
   }
 
   /**
@@ -115,7 +115,7 @@ public final class InfraLogger {
    */
   public void warn(String message) {
     _slf4jLogger.warn(message);
-    _julLogger.warning(message);
+    //_julLogger.warning(message);
   }
 
   /**
@@ -126,7 +126,7 @@ public final class InfraLogger {
    */
   public void warn(String message, Throwable throwable) {
     _slf4jLogger.warn(message, throwable);
-    _julLogger.log(Level.WARNING, message, throwable);
+    //_julLogger.log(Level.WARNING, message, throwable);
   }
 
   /**
@@ -137,7 +137,7 @@ public final class InfraLogger {
    */
   public void warn(String format, Object arg) {
     _slf4jLogger.warn(format, arg);
-    _julLogger.warning(String.format(format.replace("{}", "%s"), arg));
+    //_julLogger.warning(String.format(format.replace("{}", "%s"), arg));
   }
 
   /**
@@ -149,7 +149,7 @@ public final class InfraLogger {
    */
   public void warn(String format, Object arg1, Object arg2) {
     _slf4jLogger.warn(format, arg1, arg2);
-    _julLogger.warning(String.format(format.replace("{}", "%s"), arg1, arg2));
+    //_julLogger.warning(String.format(format.replace("{}", "%s"), arg1, arg2));
   }
 
   /**
@@ -160,7 +160,7 @@ public final class InfraLogger {
    */
   public void warn(String format, Object... args) {
     _slf4jLogger.warn(format, args);
-    _julLogger.warning(String.format(format.replaceAll("\\{\\}", "%s"), args));
+    //_julLogger.warning(String.format(format.replaceAll("\\{\\}", "%s"), args));
   }
 
   /**
@@ -168,7 +168,7 @@ public final class InfraLogger {
    */
   public void info(String message) {
     _slf4jLogger.info(message);
-    _julLogger.info(message);
+    //_julLogger.info(message);
   }
 
   /**
@@ -179,7 +179,7 @@ public final class InfraLogger {
    */
   public void info(String format, Object arg) {
     _slf4jLogger.info(format, arg);
-    _julLogger.info(String.format(format.replace("{}", "%s"), arg));
+    //_julLogger.info(String.format(format.replace("{}", "%s"), arg));
   }
 
   /**
@@ -191,7 +191,7 @@ public final class InfraLogger {
    */
   public void info(String format, Object arg1, Object arg2) {
     _slf4jLogger.info(format, arg1, arg2);
-    _julLogger.info(String.format(format.replace("{}", "%s"), arg1, arg2));
+    //_julLogger.info(String.format(format.replace("{}", "%s"), arg1, arg2));
   }
 
   /**
@@ -202,7 +202,7 @@ public final class InfraLogger {
    */
   public void info(String format, Object... args) {
     _slf4jLogger.info(format, args);
-    _julLogger.info(String.format(format.replaceAll("\\{\\}", "%s"), args));
+    //_julLogger.info(String.format(format.replaceAll("\\{\\}", "%s"), args));
   }
 
   /**
@@ -217,7 +217,7 @@ public final class InfraLogger {
    */
   public void debug(String message) {
     _slf4jLogger.debug(message);
-    _julLogger.fine(message);
+    //_julLogger.fine(message);
   }
 
   /**
@@ -229,7 +229,7 @@ public final class InfraLogger {
   public void debug(String format, Object arg) {
     _slf4jLogger.debug(format, arg);
     if (_julLogger.isLoggable(Level.FINE)) {
-      _julLogger.fine(String.format(format.replace("{}", "%s"), arg));
+      //_julLogger.fine(String.format(format.replace("{}", "%s"), arg));
     }
   }
 
@@ -243,7 +243,7 @@ public final class InfraLogger {
   public void debug(String format, Object arg1, Object arg2) {
     _slf4jLogger.debug(format, arg1, arg2);
     if (_julLogger.isLoggable(Level.FINE)) {
-      _julLogger.fine(String.format(format.replace("{}", "%s"), arg1, arg2));
+      //_julLogger.fine(String.format(format.replace("{}", "%s"), arg1, arg2));
     }
   }
 
@@ -256,7 +256,7 @@ public final class InfraLogger {
   public void debug(String format, Object... args) {
     _slf4jLogger.debug(format, args);
     if (_julLogger.isLoggable(Level.FINE)) {
-      _julLogger.fine(String.format(format.replaceAll("\\{\\}", "%s"), args));
+      //_julLogger.fine(String.format(format.replaceAll("\\{\\}", "%s"), args));
     }
   }
 
@@ -272,7 +272,7 @@ public final class InfraLogger {
    */
   public void trace(String message) {
     _slf4jLogger.trace(message);
-    _julLogger.finest(message);
+    //_julLogger.finest(message);
   }
 
   /**
@@ -284,7 +284,7 @@ public final class InfraLogger {
   public void trace(String format, Object arg) {
     _slf4jLogger.trace(format, arg);
     if (_julLogger.isLoggable(Level.FINEST)) {
-      _julLogger.finest(String.format(format.replace("{}", "%s"), arg));
+      //_julLogger.finest(String.format(format.replace("{}", "%s"), arg));
     }
   }
 
@@ -298,7 +298,7 @@ public final class InfraLogger {
   public void trace(String format, Object arg1, Object arg2) {
     _slf4jLogger.trace(format, arg1, arg2);
     if (_julLogger.isLoggable(Level.FINEST)) {
-      _julLogger.finest(String.format(format.replace("{}", "%s"), arg1, arg2));
+      //_julLogger.finest(String.format(format.replace("{}", "%s"), arg1, arg2));
     }
   }
 

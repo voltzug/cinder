@@ -51,6 +51,18 @@ public class Blob {
   }
 
   /**
+   * Returns the underlying byte array buffer.
+   * <p>
+   * <b>Security Note:</b> Use with care! This exposes the internal buffer directly.
+   * Modifying or leaking this array may compromise sensitive data.
+   *
+   * @return the internal byte array buffer
+   */
+  public byte[] getBytes() {
+    return buffer;
+  }
+
+  /**
    * Returns a read-only {@link ByteBuffer} view of the underlying blob bytes.
    * The returned buffer reflects the current contents of the blob, but cannot be modified.
    *

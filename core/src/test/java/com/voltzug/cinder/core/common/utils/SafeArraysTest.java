@@ -373,9 +373,8 @@ class SafeArraysTest {
   @Test
   void shouldAssertArrayIsNotNull() {
     // When/Then
-    assertThrows(
-      IllegalArgumentException.class,
-      () -> SafeArrays.assertIsArray(null)
+    assertThrows(IllegalArgumentException.class, () ->
+      SafeArrays.assertIsArray(null)
     );
   }
 
@@ -385,9 +384,8 @@ class SafeArraysTest {
     String notAnArray = "not an array";
 
     // When/Then
-    assertThrows(
-      IllegalArgumentException.class,
-      () -> SafeArrays.assertIsArray(notAnArray)
+    assertThrows(IllegalArgumentException.class, () ->
+      SafeArrays.assertIsArray(notAnArray)
     );
   }
 
@@ -397,9 +395,8 @@ class SafeArraysTest {
     byte[] empty = {};
 
     // When/Then
-    assertThrows(
-      IllegalArgumentException.class,
-      () -> SafeArrays.assertNotEmpty(empty)
+    assertThrows(IllegalArgumentException.class, () ->
+      SafeArrays.assertNotEmpty(empty)
     );
   }
 
@@ -419,5 +416,187 @@ class SafeArraysTest {
 
     // When/Then - Should not throw
     assertDoesNotThrow(() -> SafeArrays.assertNotEmpty(validArray));
+  }
+
+  @Test
+  void shouldReturnTrueForEqualByteArrays() {
+    // Given
+    byte[] a = { 10, 20, 30, 40, 50 };
+    byte[] b = { 10, 20, 30, 40, 50 };
+
+    // When
+    boolean result = SafeArrays.equals(a, b);
+
+    // Then
+    assertTrue(result, "equals should return true for identical arrays");
+  }
+
+  @Test
+  void shouldReturnFalseForDifferentByteArrays() {
+    // Given
+    byte[] a = { 1, 2, 3, 4, 5 };
+    byte[] b = { 1, 2, 3, 4, 6 };
+
+    // When
+    boolean result = SafeArrays.equals(a, b);
+
+    // Then
+    assertFalse(
+      result,
+      "equals should return false for arrays with different contents"
+    );
+  }
+
+  @Test
+  void shouldReturnFalseIfArraysAreOfDifferentLength() {
+    // Given
+    byte[] a = { 1, 2, 3 };
+    byte[] b = { 1, 2, 3, 4 };
+
+    // When/Then
+    assertFalse(
+      SafeArrays.equals(a, b),
+      "equals should return false if arrays are of different length"
+    );
+  }
+
+  @Test
+  void shouldThrowIfEitherArrayIsNull() {
+    // Given
+    byte[] a = null;
+    byte[] b = { 1, 2, 3 };
+
+    // When/Then
+    assertThrows(
+      IllegalArgumentException.class,
+      () -> SafeArrays.equals(a, b),
+      "equals should throw if first array is null"
+    );
+    assertThrows(
+      IllegalArgumentException.class,
+      () -> SafeArrays.equals(b, null),
+      "equals should throw if second array is null"
+    );
+  }
+
+  @Test
+  void shouldThrowIfEitherArrayIsEmpty() {
+    // Given
+    byte[] a = {};
+    byte[] b = { 1, 2, 3 };
+
+    // When/Then
+    assertThrows(
+      IllegalArgumentException.class,
+      () -> SafeArrays.equals(a, b),
+      "equals should throw if first array is empty"
+    );
+    assertThrows(
+      IllegalArgumentException.class,
+      () -> SafeArrays.equals(b, new byte[0]),
+      "equals should throw if second array is empty"
+    );
+  }
+
+  @Test
+  void shouldReturnTrueForEqualArraysWithNegativeValues() {
+    // Given
+    byte[] a = { -1, -2, -3, -128, 0 };
+    byte[] b = { -1, -2, -3, -128, 0 };
+
+    // When
+    boolean result = SafeArrays.equals(a, b);
+
+    // Then
+    assertTrue(
+      result,
+      "equals should return true for equal arrays with negative values"
+    );
+  }
+
+  @Test
+  void shouldReturnFalseForArraysDifferingOnlyInLastElement() {
+    // Given
+    byte[] a = { 1, 2, 3, 4, 5 };
+    byte[] b = { 1, 2, 3, 4, 6 };
+
+    // When
+    boolean result = SafeArrays.equals(a, b);
+
+    // Then
+    assertFalse(
+      result,
+      "equals should return false if only last element differs"
+    );
+  }
+
+  @Test
+  void shouldHaveEqualsTimingForLargeArraysWithOneDifference() {
+    // Given
+    int size = 1_000_000;
+    byte[] a = new byte[size];
+    byte[] a2 = new byte[size];
+    byte[] b = new byte[size];
+    byte[] c = new byte[size];
+    for (int i = 0; i < size; i++) {
+      a[i] = (byte) (i % 256);
+      a2[i] = (byte) (i % 256);
+      b[i] = (byte) (i % 256);
+      c[i] = (byte) (i % 256);
+    }
+    b[0] = (byte) (b[0] + 1);
+    c[size - 1] = (byte) (c[size - 1] + 1);
+
+    // warmup loops
+    for (int i = 0; i < 999; i++) {
+      SafeArrays.equals(a, a2);
+      SafeArrays.equals(a, b);
+      SafeArrays.equals(a2, c);
+    }
+
+    // When
+    long startAA = System.nanoTime();
+    boolean resultAA = SafeArrays.equals(a, a2);
+    long endAA = System.nanoTime();
+    long nanoAA = endAA - startAA;
+
+    long startAB = System.nanoTime();
+    boolean resultAB = SafeArrays.equals(a, b);
+    long endAB = System.nanoTime();
+    long nanoAB = endAB - startAB;
+
+    long startAC = System.nanoTime();
+    boolean resultAC = SafeArrays.equals(a2, c);
+    long endAC = System.nanoTime();
+    long nanoAC = endAC - startAC;
+
+    // Then
+    assertTrue(resultAA, "equals should return true for identical arrays");
+    assertFalse(
+      resultAB,
+      "equals should return false for arrays differing in first element"
+    );
+    assertFalse(
+      resultAC,
+      "equals should return false for arrays differing in last element"
+    );
+
+    double maxMs = Math.max(nanoAA, Math.max(nanoAB, nanoAC)) / 1_000_000.0;
+    double minMs = Math.min(nanoAA, Math.min(nanoAB, nanoAC)) / 1_000_000.0;
+    double ratio = maxMs / minMs;
+
+    // Accept only a small timing difference (e.g., within 1.2x)
+    assertTrue(
+      ratio < 1.2,
+      "Timing difference between a-b and a-c is NOT timing safe. " +
+        "Expected ratio < 1.2, got: " +
+        String.format(
+          "nanoAA=%.3fms, nanoAB=%.3fms, nanoAC=%.3fms (ratio=%.2f)",
+          nanoAA / 1_000_000.0,
+          nanoAB / 1_000_000.0,
+          nanoAC / 1_000_000.0,
+          ratio
+        )
+    );
   }
 }

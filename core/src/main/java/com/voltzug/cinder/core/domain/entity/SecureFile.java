@@ -20,6 +20,7 @@ import com.voltzug.cinder.core.domain.valueobject.PathReference;
 import com.voltzug.cinder.core.domain.valueobject.SealedBlob;
 import com.voltzug.cinder.core.domain.valueobject.id.FileId;
 import com.voltzug.cinder.core.domain.valueobject.id.LinkId;
+import com.voltzug.cinder.core.domain.valueobject.id.UserId;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -29,6 +30,7 @@ import java.util.Objects;
  *
  * @param fileId             Unique file identifier
  * @param linkId             Unique link identifier
+ * @param linkId             Unique fileowner identifier
  * @param blobPath           Reference to the file's storage location
  * @param sealedEnvelope     Server-sealed envelope containing file key and nonce
  * @param sealedSalt         Server-sealed salt for key derivation
@@ -41,6 +43,7 @@ import java.util.Objects;
 public record SecureFile<V, C>(
   FileId fileId,
   LinkId linkId,
+  UserId userId,
   PathReference blobPath,
   SealedBlob sealedEnvelope,
   SealedBlob sealedSalt,
@@ -53,6 +56,7 @@ public record SecureFile<V, C>(
   public SecureFile {
     Objects.requireNonNull(fileId, "fileId must not be null");
     Objects.requireNonNull(linkId, "linkId must not be null");
+    Objects.requireNonNull(userId, "userId must not be null");
     Objects.requireNonNull(blobPath, "blobPath must not be null");
     Objects.requireNonNull(sealedEnvelope, "sealedEnvelope must not be null");
     Objects.requireNonNull(sealedSalt, "sealedSalt must not be null");
@@ -92,7 +96,7 @@ public record SecureFile<V, C>(
   public final boolean equals(Object other) {
     if (this == other) return true;
     if (getClass() != other.getClass()) return false;
-    SecureFile<?,?> o = (SecureFile<?,?>) other;
+    SecureFile<?, ?> o = (SecureFile<?, ?>) other;
     return (
       remainingAttempts == o.remainingAttempts &&
       Objects.equals(createdAt, o.createdAt) &&

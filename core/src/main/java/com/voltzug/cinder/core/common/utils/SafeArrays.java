@@ -16,6 +16,7 @@
 package com.voltzug.cinder.core.common.utils;
 
 import java.lang.reflect.Array;
+import java.security.MessageDigest;
 import java.util.Arrays;
 
 /**
@@ -124,5 +125,21 @@ public class SafeArrays {
     System.arraycopy(source, 0, result, 0, source.length);
     seal(source);
     return result;
+  }
+
+  /**
+   * Compares two byte arrays for equality in a timing-safe manner.
+   * This method is resistant to timing attacks by ensuring the comparison
+   * takes the same amount of time regardless of the contents of the arrays.
+   *
+   * @param a the first byte array
+   * @param b the second byte array
+   * @return true if both arrays are equal in length and contents
+   * @throws IllegalArgumentException if either array is null, empty, or of unequal length
+   */
+  public static boolean equals(final byte[] a, final byte[] b) {
+    assertNotEmpty(a);
+    assertNotEmpty(b);
+    return MessageDigest.isEqual(a, b);
   }
 }

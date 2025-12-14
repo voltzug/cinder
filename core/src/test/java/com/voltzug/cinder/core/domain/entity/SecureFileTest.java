@@ -7,6 +7,7 @@ import com.voltzug.cinder.core.domain.valueobject.PathReference;
 import com.voltzug.cinder.core.domain.valueobject.SealedBlob;
 import com.voltzug.cinder.core.domain.valueobject.id.FileId;
 import com.voltzug.cinder.core.domain.valueobject.id.LinkId;
+import com.voltzug.cinder.core.domain.valueobject.id.UserId;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,10 @@ class SecureFileTest {
 
   private LinkId createLinkId() {
     return LinkId.generate();
+  }
+
+  private UserId createUserId() {
+    return new UserId("user");
   }
 
   private PathReference createBlobPath() {
@@ -63,6 +68,7 @@ class SecureFileTest {
     return new SecureFile<byte[], Object>(
       createFileId(),
       createLinkId(),
+      createUserId(),
       createBlobPath(),
       createSealedEnvelope(),
       createSealedSalt(),
@@ -94,6 +100,7 @@ class SecureFileTest {
     SecureFile<byte[], Object> secureFile = new SecureFile<byte[], Object>(
       fileId,
       linkId,
+      createUserId(),
       blobPath,
       sealedEnvelope,
       sealedSalt,
@@ -126,6 +133,7 @@ class SecureFileTest {
     SecureFile<byte[], Object> secureFile = new SecureFile<byte[], Object>(
       createFileId(),
       createLinkId(),
+      createUserId(),
       createBlobPath(),
       createSealedEnvelope(),
       createSealedSalt(),
@@ -149,6 +157,7 @@ class SecureFileTest {
     SecureFile<byte[], Object> secureFile = new SecureFile<byte[], Object>(
       createFileId(),
       createLinkId(),
+      createUserId(),
       createBlobPath(),
       createSealedEnvelope(),
       createSealedSalt(),
@@ -177,6 +186,7 @@ class SecureFileTest {
         new SecureFile<byte[], Object>(
           null,
           createLinkId(),
+          createUserId(),
           createBlobPath(),
           createSealedEnvelope(),
           createSealedSalt(),
@@ -202,6 +212,7 @@ class SecureFileTest {
         new SecureFile<byte[], Object>(
           createFileId(),
           null,
+          createUserId(),
           createBlobPath(),
           createSealedEnvelope(),
           createSealedSalt(),
@@ -216,6 +227,32 @@ class SecureFileTest {
   }
 
   @Test
+  void shouldThrowExceptionForNullUserId() {
+    // Given
+    Instant expiryDate = Instant.now().plus(1, ChronoUnit.DAYS);
+
+    // When/Then
+    NullPointerException exception = assertThrows(
+      NullPointerException.class,
+      () ->
+        new SecureFile<byte[], Object>(
+          createFileId(),
+          createLinkId(),
+          null,
+          createBlobPath(),
+          createSealedEnvelope(),
+          createSealedSalt(),
+          createFileSpecs(expiryDate),
+          5,
+          Instant.now(),
+          createGateHash(),
+          null
+        )
+    );
+    assertEquals("userId must not be null", exception.getMessage());
+  }
+
+  @Test
   void shouldThrowExceptionForNullBlobPath() {
     // Given
     Instant expiryDate = Instant.now().plus(1, ChronoUnit.DAYS);
@@ -227,6 +264,7 @@ class SecureFileTest {
         new SecureFile<byte[], Object>(
           createFileId(),
           createLinkId(),
+          createUserId(),
           null,
           createSealedEnvelope(),
           createSealedSalt(),
@@ -252,6 +290,7 @@ class SecureFileTest {
         new SecureFile<byte[], Object>(
           createFileId(),
           createLinkId(),
+          createUserId(),
           createBlobPath(),
           null,
           createSealedSalt(),
@@ -277,6 +316,7 @@ class SecureFileTest {
         new SecureFile<byte[], Object>(
           createFileId(),
           createLinkId(),
+          createUserId(),
           createBlobPath(),
           createSealedEnvelope(),
           null,
@@ -302,6 +342,7 @@ class SecureFileTest {
         new SecureFile<byte[], Object>(
           createFileId(),
           createLinkId(),
+          createUserId(),
           createBlobPath(),
           createSealedEnvelope(),
           createSealedSalt(),
@@ -325,6 +366,7 @@ class SecureFileTest {
       new SecureFile<byte[], Object>(
         createFileId(),
         createLinkId(),
+        createUserId(),
         createBlobPath(),
         createSealedEnvelope(),
         createSealedSalt(),
@@ -346,6 +388,7 @@ class SecureFileTest {
         new SecureFile<byte[], Object>(
           createFileId(),
           createLinkId(),
+          createUserId(),
           createBlobPath(),
           createSealedEnvelope(),
           createSealedSalt(),
@@ -371,6 +414,7 @@ class SecureFileTest {
         new SecureFile<byte[], Object>(
           createFileId(),
           createLinkId(),
+          createUserId(),
           createBlobPath(),
           createSealedEnvelope(),
           createSealedSalt(),
@@ -474,6 +518,7 @@ class SecureFileTest {
     SecureFile<byte[], Object> secureFile = new SecureFile<byte[], Object>(
       createFileId(),
       createLinkId(),
+      createUserId(),
       createBlobPath(),
       createSealedEnvelope(),
       createSealedSalt(),
@@ -515,6 +560,7 @@ class SecureFileTest {
     SecureFile<byte[], Object> secureFile = new SecureFile<byte[], Object>(
       createFileId(),
       createLinkId(),
+      createUserId(),
       createBlobPath(),
       createSealedEnvelope(),
       createSealedSalt(),
@@ -552,6 +598,7 @@ class SecureFileTest {
     SecureFile<byte[], Object> secureFile = new SecureFile<byte[], Object>(
       createFileId(),
       createLinkId(),
+      createUserId(),
       createBlobPath(),
       createSealedEnvelope(),
       createSealedSalt(),
@@ -585,6 +632,7 @@ class SecureFileTest {
     SecureFile<byte[], Object> file1 = new SecureFile<byte[], Object>(
       fileId,
       linkId,
+      createUserId(),
       blobPath,
       sealedEnvelope,
       sealedSalt,

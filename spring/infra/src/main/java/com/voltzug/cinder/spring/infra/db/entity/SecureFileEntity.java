@@ -22,7 +22,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -34,7 +33,11 @@ import lombok.Setter;
 /**
  * JPA entity mapping for the secure_file table.
  * Stores metadata about encrypted files including storage path,
- * encrypted salt (S1), owner information, and expiry date.
+ * sealed envelope, sealed salt, owner information, and expiry date.
+ *
+ * <p>This entity can be persisted independently before the associated
+ * {@link AccessLinkEntity} is created. The 1:1 relationship is owned
+ * by {@link AccessLinkEntity} via FK, enabling SafeFile-first creation flow.</p>
  */
 @Entity
 @Table(name = "secure_file")
@@ -46,6 +49,19 @@ public class SecureFileEntity {
   @Id
   @Column(name = "file_id", nullable = false, updatable = false, length = 64)
   private String id;
+
+  /**
+   * Link identifier stored as a regular column for lookup purposes.
+   * This is NOT a FK - the relationship is owned by AccessLinkEntity.
+   */
+  @Column(
+    name = "link_id",
+    nullable = false,
+    unique = true,
+    updatable = false,
+    length = 64
+  )
+  private String linkId;
 
   @Column(name = "owner_id", nullable = false, updatable = false, length = 256)
   private String ownerId;
@@ -70,43 +86,59 @@ public class SecureFileEntity {
   @Column(name = "created_at", nullable = false, updatable = false)
   private Instant createdAt;
 
+  /**
+   * The associated access link entity (inverse side of 1:1 relationship).
+   * May be null if the access link has not been created yet.
+   */
   @OneToOne(
+    mappedBy = "secureFile",
     cascade = CascadeType.ALL,
-    fetch = FetchType.EAGER,
-    optional = false
+    fetch = FetchType.LAZY,
+    optional = true,
+    orphanRemoval = true
   )
-  @JoinColumn(name = "link_id", nullable = false, unique = true)
   private AccessLinkEntity accessLink;
 
   /**
    * Constructs a new SecureFileEntity with all required fields.
+   * The accessLink can be set separately after creation.
    *
-   * @param id               the unique file identifier
-   * @param ownerId          the unique fileowner identifier
-   * @param pathReference    the storage path reference (local path or cloud URI)
-   * @param sealedEnvelope   the server-sealed envelope (file key and nonce)
-   * @param sealedSalt       the server-sealed salt for key derivation
-   * @param expiryDate       the expiration timestamp
-   * @param createdAt        the creation timestamp
-   * @param accessLink       the related link
+   * @param id             the unique file identifier
+   * @param linkId         the unique link identifier (for lookup)
+   * @param ownerId        the unique fileowner identifier
+   * @param pathReference  the storage path reference (local path or cloud URI)
+   * @param sealedEnvelope the server-sealed envelope (file key and nonce)
+   * @param sealedSalt     the server-sealed salt for key derivation
+   * @param expiryDate     the expiration timestamp
+   * @param createdAt      the creation timestamp
    */
   public SecureFileEntity(
     String id,
+    String linkId,
     String ownerId,
     String pathReference,
     byte[] sealedEnvelope,
     byte[] sealedSalt,
     Instant expiryDate,
-    Instant createdAt,
-    AccessLinkEntity accessLink
+    Instant createdAt
   ) {
     this.id = id;
+    this.linkId = linkId;
     this.ownerId = ownerId;
     this.pathReference = pathReference;
     this.sealedEnvelope = sealedEnvelope;
     this.sealedSalt = sealedSalt;
     this.expiryDate = expiryDate;
     this.createdAt = createdAt;
+  }
+
+  /**
+   * Sets the associated access link entity.
+   * Also updates the bidirectional relationship on the AccessLinkEntity side.
+   *
+   * @param accessLink the access link to associate with this file
+   */
+  public void setAccessLink(AccessLinkEntity accessLink) {
     this.accessLink = accessLink;
   }
 }

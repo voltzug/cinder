@@ -17,31 +17,31 @@ package com.voltzug.cinder.core.port.out;
 
 import com.voltzug.cinder.core.common.valueobject.Blob;
 import com.voltzug.cinder.core.domain.valueobject.PathReference;
-import com.voltzug.cinder.core.domain.valueobject.id.FileId;
 import com.voltzug.cinder.core.exception.FileStorageException;
-import java.util.Optional;
 
 /**
  * Outbound port for binary file storage.
  * Abstraction for storing encrypted file blobs (local disk, S3, etc.).
  */
 public interface FileStorePort {
+  /** Checks if a file with the given {@link PathReference} exists in the storage */
+  public boolean exists(PathReference path);
+
   /**
    * Saves the encrypted blob to storage.
    *
-   * @param fileId the unique file identifier (can be used to generate path)
    * @param data the encrypted data to store
    * @return the reference path to the stored blob
    */
-  PathReference save(FileId fileId, Blob data) throws FileStorageException;
+  PathReference save(Blob data) throws FileStorageException;
 
   /**
    * Loads the encrypted blob from storage.
    *
    * @param path the reference path to the blob
-   * @return an Optional containing the blob if found
+   * @return the blob if found
    */
-  Optional<Blob> load(PathReference path) throws FileStorageException;
+  Blob load(PathReference path) throws FileStorageException;
 
   /**
    * Deletes the blob from storage.
