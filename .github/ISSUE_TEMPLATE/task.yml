@@ -8,15 +8,6 @@ body:
       value: |
         # Task 📝
 
-  - type: input
-    id: title
-    attributes:
-      label: Short Title
-      description: Provide a concise title for the task (single line).
-      placeholder: e.g. Implement OPAQUE-based downloader verification in infra module
-    validations:
-      required: true
-
   - type: textarea
     id: task_what
     attributes:
