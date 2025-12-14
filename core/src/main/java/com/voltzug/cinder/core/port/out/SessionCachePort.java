@@ -17,6 +17,7 @@ package com.voltzug.cinder.core.port.out;
 
 import com.voltzug.cinder.core.domain.entity.Session;
 import com.voltzug.cinder.core.domain.valueobject.id.SessionId;
+import com.voltzug.cinder.core.exception.InvalidSessionException;
 import java.util.Optional;
 
 /**
@@ -28,7 +29,7 @@ public interface SessionCachePort {
   /**
    * Saves a session to the cache.
    */
-  void save(Session session);
+  void save(Session session) throws InvalidSessionException;
 
   /**
    * Retrieves a session from the cache by its identifier.
