@@ -19,6 +19,7 @@ import com.voltzug.cinder.core.exception.*;
 import com.voltzug.cinder.spring.infra.logging.InfraLogger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -352,6 +353,36 @@ public class GlobalExceptionHandler {
         "UNSUPPORTED_MEDIA_TYPE",
         "Content type '" + ex.getContentType() + "' is not supported"
       )
+    );
+  }
+
+  /**
+   * Handles HTTP message not readable exceptions (malformed JSON, missing body, etc.).
+   *
+   * @param ex the message not readable exception
+   * @return 400 Bad Request response
+   */
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ApiError> handleMessageNotReadable(
+    HttpMessageNotReadableException ex
+  ) {
+    LOG.debug("HTTP message not readable: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+      new ApiError("INVALID_REQUEST_BODY", "Request body is invalid or malformed")
+    );
+  }
+
+  /**
+   * Handles NullPointerException (often from DTO validation via Objects.requireNonNull).
+   *
+   * @param ex the null pointer exception
+   * @return 400 Bad Request response
+   */
+  @ExceptionHandler(NullPointerException.class)
+  public ResponseEntity<ApiError> handleNullPointer(NullPointerException ex) {
+    LOG.debug("Null pointer exception: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+      new ApiError("MISSING_REQUIRED_FIELD", ex.getMessage() != null ? ex.getMessage() : "Required field is missing")
     );
   }
 
