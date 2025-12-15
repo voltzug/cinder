@@ -19,9 +19,15 @@ import com.voltzug.cinder.core.exception.*;
 import com.voltzug.cinder.spring.infra.logging.InfraLogger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
@@ -72,7 +78,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiError> handleInvalidSession(
     InvalidSessionException ex
   ) {
-    LOG.warn("Invalid session: {}", ex.getSessionId().value());
+    LOG.warn("Invalid session: {}", ex.getSessionId().toString());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
       ApiError.invalidSession()
     );
@@ -88,7 +94,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiError> handleMaxAttempts(
     MaxAttemptsExceededException ex
   ) {
-    LOG.warn("Max attempts exceeded: linkId={}", ex.getId().value());
+    LOG.warn("Max attempts exceeded: linkId={}", ex.getId().toString());
     return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(
       ApiError.maxAttemptsExceeded()
     );
@@ -102,7 +108,7 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(FileExpiredException.class)
   public ResponseEntity<ApiError> handleLinkExpired(FileExpiredException ex) {
-    LOG.info("Link expired: linkId={}", ex.getId().value());
+    LOG.info("Link expired: linkId={}", ex.getId().toString());
     return ResponseEntity.status(HttpStatus.GONE).body(ApiError.linkExpired());
   }
 
@@ -115,7 +121,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(FileNotFoundException.class)
   public ResponseEntity<ApiError> handleFileNotFound(FileNotFoundException ex) {
     if (ex.getFileId() != null) {
-      LOG.warn("File not found: fileId={}", ex.getFileId().value());
+      LOG.warn("File not found: fileId={}", ex.getFileId().toString());
     } else {
       LOG.warn("File not found: {}", ex.getMessage());
     }
@@ -134,7 +140,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiError> handleAccessVerification(
     AccessVerificationException ex
   ) {
-    LOG.warn("Access verification failed: linkId={}", ex.getId().value());
+    LOG.warn("Access verification failed: linkId={}", ex.getId().toString());
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
       new ApiError("ACCESS_VERIFICATION_FAILED", "Access verification failed")
     );
@@ -150,7 +156,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiError> handleInvalidLink(InvalidLinkException ex) {
     LOG.warn(
       "Invalid link: linkId={}, msg={}",
-      ex.getId() != null ? ex.getId().value() : "null",
+      ex.getId() != null ? ex.getId().toString() : "null",
       ex.getMessage()
     );
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -170,7 +176,7 @@ public class GlobalExceptionHandler {
   ) {
     LOG.warn(
       "HMAC verification failed: sessionId={}",
-      ex.getSessionId().value()
+      ex.getSessionId().toString()
     );
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
       new ApiError("HMAC_VERIFICATION_FAILED", "Message authentication failed")
@@ -189,7 +195,7 @@ public class GlobalExceptionHandler {
   ) {
     LOG.warn(
       "Timestamp skew: sessionId={}, timestamp={}, allowedSkewMs={}",
-      ex.getSessionId() != null ? ex.getSessionId().value() : "null",
+      ex.getSessionId() != null ? ex.getSessionId().toString() : "null",
       ex.getTimestamp() != null ? ex.getTimestamp().toString() : "null",
       ex.getAllowedSkewMs()
     );
@@ -259,6 +265,146 @@ public class GlobalExceptionHandler {
       new ApiError(
         "PAYLOAD_TOO_LARGE",
         "File upload exceeds maximum allowed size"
+      )
+    );
+  }
+
+  /**
+   * Handles missing request parameter exceptions.
+   *
+   * @param ex the missing parameter exception
+   * @return 400 Bad Request response
+   */
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  public ResponseEntity<ApiError> handleMissingParameter(
+    MissingServletRequestParameterException ex
+  ) {
+    LOG.debug("Missing request parameter: {}", ex.getParameterName());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+      new ApiError(
+        "MISSING_PARAMETER",
+        "Required parameter '" + ex.getParameterName() + "' is missing"
+      )
+    );
+  }
+
+  /**
+   * Handles missing multipart file/part exceptions.
+   *
+   * @param ex the missing request part exception
+   * @return 400 Bad Request response
+   */
+  @ExceptionHandler(MissingServletRequestPartException.class)
+  public ResponseEntity<ApiError> handleMissingRequestPart(
+    MissingServletRequestPartException ex
+  ) {
+    LOG.debug("Missing request part: {}", ex.getRequestPartName());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+      new ApiError(
+        "MISSING_PART",
+        "Required part '" + ex.getRequestPartName() + "' is missing"
+      )
+    );
+  }
+
+  /**
+   * Handles method argument type mismatch exceptions (e.g., invalid date format).
+   *
+   * @param ex the type mismatch exception
+   * @return 400 Bad Request response
+   */
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<ApiError> handleTypeMismatch(
+    MethodArgumentTypeMismatchException ex
+  ) {
+    LOG.debug(
+      "Type mismatch for parameter '{}': value='{}', requiredType={}",
+      ex.getName(),
+      ex.getValue(),
+      ex.getRequiredType() != null
+        ? ex.getRequiredType().getSimpleName()
+        : "unknown"
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+      new ApiError(
+        "TYPE_MISMATCH",
+        "Invalid value for parameter '" + ex.getName() + "'"
+      )
+    );
+  }
+
+  /**
+   * Handles unsupported media type exceptions.
+   *
+   * @param ex the media type not supported exception
+   * @return 415 Unsupported Media Type response
+   */
+  @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+  public ResponseEntity<ApiError> handleMediaTypeNotSupported(
+    HttpMediaTypeNotSupportedException ex
+  ) {
+    LOG.debug(
+      "Unsupported media type: contentType={}, supported={}",
+      ex.getContentType(),
+      ex.getSupportedMediaTypes()
+    );
+    return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(
+      new ApiError(
+        "UNSUPPORTED_MEDIA_TYPE",
+        "Content type '" + ex.getContentType() + "' is not supported"
+      )
+    );
+  }
+
+  /**
+   * Handles HTTP message not readable exceptions (malformed JSON, missing body, etc.).
+   *
+   * @param ex the message not readable exception
+   * @return 400 Bad Request response
+   */
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ApiError> handleMessageNotReadable(
+    HttpMessageNotReadableException ex
+  ) {
+    LOG.debug("HTTP message not readable: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+      new ApiError("INVALID_REQUEST_BODY", "Request body is invalid or malformed")
+    );
+  }
+
+  /**
+   * Handles NullPointerException (often from DTO validation via Objects.requireNonNull).
+   *
+   * @param ex the null pointer exception
+   * @return 400 Bad Request response
+   */
+  @ExceptionHandler(NullPointerException.class)
+  public ResponseEntity<ApiError> handleNullPointer(NullPointerException ex) {
+    LOG.debug("Null pointer exception: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+      new ApiError("MISSING_REQUIRED_FIELD", ex.getMessage() != null ? ex.getMessage() : "Required field is missing")
+    );
+  }
+
+  /**
+   * Handles HTTP method not supported exceptions.
+   *
+   * @param ex the method not supported exception
+   * @return 405 Method Not Allowed response
+   */
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  public ResponseEntity<ApiError> handleMethodNotSupported(
+    HttpRequestMethodNotSupportedException ex
+  ) {
+    LOG.debug(
+      "Method not supported: method={}, supportedMethods={}",
+      ex.getMethod(),
+      ex.getSupportedHttpMethods()
+    );
+    return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(
+      new ApiError(
+        "METHOD_NOT_ALLOWED",
+        "Request method '" + ex.getMethod() + "' is not supported"
       )
     );
   }

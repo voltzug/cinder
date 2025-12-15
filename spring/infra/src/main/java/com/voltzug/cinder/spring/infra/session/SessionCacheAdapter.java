@@ -54,7 +54,7 @@ public class SessionCacheAdapter implements SessionCachePort {
       }
       throw new InvalidSessionException(sessionId, "Session has expired");
     }
-    String id = sessionId.value();
+    String id = sessionId.toString();
     _sessions.put(id, session);
     if (LOG.isDebugEnabled()) {
       LOG.debug(
@@ -67,7 +67,7 @@ public class SessionCacheAdapter implements SessionCachePort {
 
   @Override
   public Optional<Session> get(@NonNull SessionId sessionId) {
-    String id = sessionId.value();
+    String id = sessionId.toString();
     Session session = _sessions.get(id);
     if (session == null) {
       return Optional.empty();
@@ -86,7 +86,7 @@ public class SessionCacheAdapter implements SessionCachePort {
 
   @Override
   public void delete(@NonNull SessionId sessionId) {
-    String id = sessionId.value();
+    String id = sessionId.toString();
     Session removed = _sessions.remove(id);
     if (removed != null) {
       if (LOG.isTraceEnabled()) {

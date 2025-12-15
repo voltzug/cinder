@@ -57,7 +57,7 @@ public class DownloadLimitAdapter implements DownloadLimitPort {
   @Transactional
   public void initialize(@NonNull LinkId linkId, @NonNull FileSpecs specs)
     throws InvalidLinkException {
-    var linkIdStr = linkId.value();
+    var linkIdStr = linkId.toString();
 
     // Check if AccessLink already exists (update case)
     var existingLink = _accessLinkRepository.findById(linkIdStr);
@@ -110,7 +110,7 @@ public class DownloadLimitAdapter implements DownloadLimitPort {
   @Override
   @Transactional(readOnly = true)
   public Optional<DownloadLimit> get(LinkId linkId) {
-    var linkIdStr = linkId.value();
+    var linkIdStr = linkId.toString();
     var accessLinkOpt = _accessLinkRepository.findById(linkIdStr);
     if (accessLinkOpt.isEmpty()) {
       return Optional.empty();
@@ -153,7 +153,7 @@ public class DownloadLimitAdapter implements DownloadLimitPort {
   @Transactional
   public DownloadLimit decrementAttempts(LinkId linkId)
     throws MaxAttemptsExceededException {
-    var linkIdStr = linkId.value();
+    var linkIdStr = linkId.toString();
     var now = _clock.now();
     var updatedRows = _accessLinkRepository.decrementAttempts(linkIdStr, now);
 
@@ -200,7 +200,7 @@ public class DownloadLimitAdapter implements DownloadLimitPort {
   @Override
   @Transactional
   public void delete(LinkId linkId) {
-    var linkIdStr = linkId.value();
+    var linkIdStr = linkId.toString();
     _accessLinkRepository.deleteById(linkIdStr);
     LOG.info("Deleted download limit for linkId: {}", linkIdStr);
   }
