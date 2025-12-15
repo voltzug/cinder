@@ -87,6 +87,8 @@ public class WebConfig implements WebMvcConfigurer {
       .exposedHeaders(
         "X-Cinder-Protocol-Version",
         "X-Cinder-Salt1-Length",
+        "X-Cinder-Envelope",
+        "X-Cinder-Salt",
         "Content-Length"
       )
       .maxAge(3600);

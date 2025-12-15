@@ -13,23 +13,26 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-package com.voltzug.cinder.core.domain.valueobject.id;
+package com.voltzug.cinder.spring.rest.dto.alpha;
 
-import com.voltzug.cinder.core.common.valueobject.Id;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.Objects;
 
 /**
- * Unique identifier for a file/quiz resource
+ * Response DTO for alpha quiz upload endpoint.
+ *
+ * <p>Returned after a successful file upload, containing the generated link identifier
+ * that the client uses to compose the access URL.
+ *
+ * @param linkId     the generated link identifier (with LK prefix)
+ * @param expiryDate when the file will expire
  */
-public final class FileId extends Id {
-
-  public static final IdPrefix PREFIX = IdPrefix.FILE;
-
-  public FileId(final String value) {
-    super(value, PREFIX);
-  }
-
-  public static FileId generate() {
-    return new FileId(UUID.randomUUID().toString());
+public record AlphaUploadResponse(
+  String linkId,
+  Instant expiryDate
+) {
+  public AlphaUploadResponse {
+    Objects.requireNonNull(linkId, "linkId must not be null");
+    Objects.requireNonNull(expiryDate, "expiryDate must not be null");
   }
 }

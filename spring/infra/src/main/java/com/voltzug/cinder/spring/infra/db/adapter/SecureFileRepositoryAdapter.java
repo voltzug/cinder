@@ -74,8 +74,8 @@ public class SecureFileRepositoryAdapter<V extends SafeBlob, C extends Blob>
       domain.linkId().toString(),
       domain.userId().toString(),
       domain.blobPath().value(),
-      domain.sealedEnvelope().getBuffer().array().clone(),
-      domain.sealedSalt().getBuffer().array().clone(),
+      domain.sealedEnvelope().getBytes().clone(),
+      domain.sealedSalt().getBytes().clone(),
       domain.specs().expiryDate(),
       domain.createdAt()
     );
@@ -135,9 +135,22 @@ public class SecureFileRepositoryAdapter<V extends SafeBlob, C extends Blob>
   @Override
   @Transactional
   public void save(SecureFile<V, C> file) {
+    LOG.debug("Mapping SecureFile domain to entity: fileId={}, linkId={}, userId={}, blobPath={}, sealedEnvelope(length)={}, sealedSalt(length)={}, expiryDate={}, createdAt={}, specs={}, sealedEnvelope(hex)={}, sealedSalt(hex)={}",
+      file.fileId(),
+      file.linkId(),
+      file.userId(),
+      file.blobPath(),
+      file.sealedEnvelope() != null ? file.sealedEnvelope().getBytes().length : "null",
+      file.sealedSalt() != null ? file.sealedSalt().getBytes().length : "null",
+      file.specs() != null ? file.specs().expiryDate() : "null",
+      file.createdAt(),
+      file.specs(),
+      file.sealedEnvelope() != null ? "[bin]" : "null",
+      file.sealedSalt() != null ? "[bin]" : "null"
+    );
     var entity = _toEntity(file);
     _repository.save(entity);
-    LOG.debug("Saved SecureFile with fileId: {}", file.fileId().value());
+    LOG.debug("Saved SecureFile with fileId: {}", file.fileId().toString());
   }
 
   /**
@@ -149,7 +162,7 @@ public class SecureFileRepositoryAdapter<V extends SafeBlob, C extends Blob>
   @Override
   @Transactional(readOnly = true)
   public Optional<SecureFile<V, C>> findByLinkId(LinkId linkId) {
-    return _repository.findByLinkId(linkId.value()).map(this::_toDomain);
+    return _repository.findByLinkId(linkId.toString()).map(this::_toDomain);
   }
 
   /**
@@ -161,7 +174,7 @@ public class SecureFileRepositoryAdapter<V extends SafeBlob, C extends Blob>
   @Transactional
   public void deleteById(FileId fileId) {
     _repository.deleteById(fileId.value());
-    LOG.debug("Deleted SecureFile with fileId: {}", fileId.value());
+    LOG.debug("Deleted SecureFile with fileId: {}", fileId.toString());
   }
 
   /**
@@ -173,7 +186,7 @@ public class SecureFileRepositoryAdapter<V extends SafeBlob, C extends Blob>
   @Transactional
   public void deleteByLinkId(LinkId linkId) {
     _repository.deleteByLinkId(linkId.value());
-    LOG.debug("Deleted SecureFile with linkId: {}", linkId.value());
+    LOG.debug("Deleted SecureFile with linkId: {}", linkId.toString());
   }
 
   /**
