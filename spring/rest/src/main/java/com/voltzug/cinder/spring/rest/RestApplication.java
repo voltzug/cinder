@@ -1,4 +1,3 @@
-package com.voltzug.cinder.spring.rest;
 // Cinder - zero-knowledge file transfer that burns after access
 // Copyright (C) 2025  voltzug
 //
@@ -14,6 +13,8 @@ package com.voltzug.cinder.spring.rest;
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
+package com.voltzug.cinder.spring.rest;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
